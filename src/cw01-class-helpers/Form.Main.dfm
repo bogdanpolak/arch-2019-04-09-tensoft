@@ -22,21 +22,16 @@ object Form1: TForm1
     Align = alLeft
     Caption = 'GroupBox1'
     TabOrder = 0
-    ExplicitLeft = 8
-    ExplicitTop = 8
-    object Button1: TButton
+    object btnTDateTimeHelper: TButton
       AlignWithMargins = True
       Left = 5
       Top = 18
       Width = 175
       Height = 25
       Align = alTop
-      Caption = 'Button1'
+      Caption = 'btnTDateTimeHelper'
       TabOrder = 0
-      OnClick = Button1Click
-      ExplicitLeft = 56
-      ExplicitTop = 152
-      ExplicitWidth = 75
+      OnClick = btnTDateTimeHelperClick
     end
   end
 end

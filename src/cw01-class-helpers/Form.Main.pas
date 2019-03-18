@@ -9,8 +9,8 @@ uses
 type
   TForm1 = class(TForm)
     GroupBox1: TGroupBox;
-    Button1: TButton;
-    procedure Button1Click(Sender: TObject);
+    btnTDateTimeHelper: TButton;
+    procedure btnTDateTimeHelperClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -31,13 +31,19 @@ var
     DateTime :TFrameDateTime;
   end;
 
-procedure TForm1.Button1Click(Sender: TObject);
+procedure TForm1.btnTDateTimeHelperClick(Sender: TObject);
 begin
-  Frames.DateTime := TFrameDateTime.Create(self);
-  with Frames.DateTime do begin
-    Parent := self;
-    Align := alClient;
+  if Assigned(Frames.DateTime) then begin
+    Frames.DateTime.BringToFront()
+  end
+  else begin
+    Frames.DateTime := TFrameDateTime.Create(self);
+    with Frames.DateTime do begin
+      Parent := self;
+      Align := alClient;
+    end;
   end;
+  Frames.DateTime.ExecuteDemo;
 end;
 
 end.

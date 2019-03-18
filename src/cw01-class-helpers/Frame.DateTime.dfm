@@ -4,11 +4,22 @@ object FrameDateTime: TFrameDateTime
   Width = 320
   Height = 240
   TabOrder = 0
-  object Label1: TLabel
-    Left = 144
-    Top = 112
-    Width = 56
-    Height = 13
-    Caption = 'Ala ma kota'
+  object Memo1: TMemo
+    AlignWithMargins = True
+    Left = 3
+    Top = 3
+    Width = 314
+    Height = 234
+    Align = alClient
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Style = []
+    Lines.Strings = (
+      'Memo1')
+    ParentFont = False
+    ScrollBars = ssVertical
+    TabOrder = 0
   end
 end
