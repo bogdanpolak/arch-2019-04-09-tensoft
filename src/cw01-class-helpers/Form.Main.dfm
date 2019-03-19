@@ -33,5 +33,19 @@ object Form1: TForm1
       TabOrder = 0
       OnClick = btnTDateTimeHelperClick
     end
+    object btnTDataSetAndDBGridHelper: TButton
+      AlignWithMargins = True
+      Left = 5
+      Top = 49
+      Width = 175
+      Height = 25
+      Align = alTop
+      Caption = 'btnTDataSetAndDBGridHelper'
+      TabOrder = 1
+      OnClick = btnTDataSetAndDBGridHelperClick
+      ExplicitLeft = 56
+      ExplicitTop = 152
+      ExplicitWidth = 75
+    end
   end
 end
