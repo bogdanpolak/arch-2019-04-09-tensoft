@@ -1,10 +1,10 @@
 # Dzień 1: Nowoczesne programowanie w Delphi
 
 1. Zaawansowane programowanie obiektowe
-	* [ ] Klasy wspomagające (class helpers), metody anonimowe
-	* [ ] Wykorzystanie zdarzeń
-	* [ ] Enumeratory, polimorfizm, klasy abstrakcyjne i zastosowanie interfejsów
-	* [ ] Typy generyczne i kolekcje generyczne
+	* [x] Klasy wspomagające (class helpers), metody anonimowe
+	* [x] Wykorzystanie zdarzeń
+	* [x] Enumeratory, polimorfizm, klasy abstrakcyjne i zastosowanie interfejsów
+	* [x] Typy generyczne i kolekcje generyczne
 1. Programowanie wielowątkowe
 	* [ ] Sekcje bezpieczne
 	* [ ] Wielowątkowe pobieranie i przetwarzanie danych na serwerze SQL 
