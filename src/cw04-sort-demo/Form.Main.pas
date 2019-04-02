@@ -5,6 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Generics.Collections,
+  System.TimeSpan,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
   Vcl.StdCtrls;
 
@@ -20,6 +21,7 @@ type
     procedure Button2Click(Sender: TObject);
   private
     EnableSorting: Boolean;
+    SwapCounter: Integer;
     procedure PrepareSortDemo (paintbox: TPaintBox;
       var data: TArray<Integer>);
     procedure swap (i, j: Integer; var data: TArray<Integer>);
@@ -28,7 +30,8 @@ type
     procedure DrawBoard(paintbox: TPaintBox; const data: TArray<Integer>);
     procedure DrawItem(paintbox: TPaintBox; index, value: integer);
     procedure GenerateData(var data: TArray<Integer>; items: Integer);
-    procedure DrawResults(paintbox: TPaintBox; const msg: string);
+    procedure DrawResults (paintbox: TPaintBox; const name: string;
+      dataSize: Integer; enlapsed: TTimeSpan; swaps: Integer);
   public
     { Public declarations }
   end;
@@ -41,7 +44,7 @@ implementation
 {$R *.dfm}
 
 uses
-  System.Diagnostics, Colors.Hsl;
+  System.Diagnostics, System.Math, Colors.Hsl;
 
 const
   MaxValue = 100;
@@ -86,6 +89,7 @@ begin
   DrawItem (SwapPaintBox, i, data[i]);
   DrawItem (SwapPaintBox, j, data[j]);
   Application.ProcessMessages;
+  inc(SwapCounter);
   WaitMilisecond (4.5);
 end;
 
@@ -103,7 +107,7 @@ begin
         if not(EnableSorting) then
           break;
       end;
-  DrawResults (SwapPaintBox, Format('[%d] ',[Length(data)])+sw.Elapsed.ToString);
+  DrawResults (SwapPaintBox, 'BubleSort', Length(data), sw.Elapsed, SwapCounter );
 end;
 
 procedure TForm1.QuickSort (var data: TArray<Integer>);
@@ -136,7 +140,7 @@ var
 begin
   sw := TStopwatch.StartNew;
   qsort(0, Length(data)-1);
-  DrawResults (SwapPaintBox, Format('[%d] ',[Length(data)])+sw.Elapsed.ToString);
+  DrawResults (SwapPaintBox, 'QuickSort', Length(data), sw.Elapsed, SwapCounter);
 end;
 
 function GetColor (value: integer): TColor;
@@ -162,7 +166,7 @@ begin
   x := index * 6;
   c.Pen.Style := psClear;
   c.Brush.Color := paintbox.Color;
-  c.Rectangle( x, 0, x+5, maxhg-(j) );
+  c.Rectangle( x, 0, x+5, maxhg-(j)+1 );
   c.Brush.Color := GetColor(value);
   c.Rectangle( x, maxhg-(j), x+5, maxhg );
 end;
@@ -177,11 +181,17 @@ begin
     DrawItem(paintbox, i, data[i]);
 end;
 
-procedure TForm1.DrawResults (paintbox: TPaintBox; const msg: string);
+procedure TForm1.DrawResults (paintbox: TPaintBox; const name: string;
+  dataSize: Integer; enlapsed: TTimeSpan; swaps: Integer);
 begin
   paintbox.Canvas.Brush.Style := bsClear;
-  paintbox.Canvas.Font.Height := 20;
-  paintbox.Canvas.TextOut( 15,10, msg );
+  paintbox.Canvas.Font.Height := 18;
+  paintbox.Canvas.Font.Style := [fsBold];
+  paintbox.Canvas.TextOut( 10,5, name );
+  paintbox.Canvas.Font.Style := [];
+  paintbox.Canvas.TextOut( 10,25, Format('items: %d',[dataSize]) );
+  paintbox.Canvas.TextOut( 10,45, Format('time: %.3f',[enlapsed.TotalSeconds]) );
+  paintbox.Canvas.TextOut( 10,65, Format('swaps: %d',[swaps]) );
 end;
 
 procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -207,6 +217,7 @@ begin
   items := round (paintbox.Width / 6) -1;
   GenerateData (data, items);
   EnableSorting := true;
+  SwapCounter := 0;
   SwapPaintBox := paintbox;
   DrawBoard(paintbox, data);
 end;

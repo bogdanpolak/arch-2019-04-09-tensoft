@@ -19,20 +19,16 @@ object Form1: TForm1
     Left = 3
     Top = 58
     Width = 629
-    Height = 206
+    Height = 175
     Align = alTop
-    ExplicitLeft = -157
-    ExplicitWidth = 792
   end
   object PaintBox2: TPaintBox
     AlignWithMargins = True
     Left = 3
-    Top = 270
+    Top = 239
     Width = 629
-    Height = 206
+    Height = 175
     Align = alTop
-    ExplicitLeft = -157
-    ExplicitWidth = 792
   end
   object GroupBox1: TGroupBox
     AlignWithMargins = True
