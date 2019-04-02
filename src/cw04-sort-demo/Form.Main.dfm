@@ -43,8 +43,6 @@ object Form1: TForm1
     Caption = 'GroupBox1'
     Padding.Bottom = 1
     TabOrder = 0
-    ExplicitLeft = -157
-    ExplicitWidth = 792
     object Button1: TButton
       AlignWithMargins = True
       Left = 5
@@ -54,6 +52,7 @@ object Form1: TForm1
       Align = alLeft
       Caption = 'Button1'
       TabOrder = 0
+      OnClick = Button1Click
     end
   end
   object tmrReady: TTimer
