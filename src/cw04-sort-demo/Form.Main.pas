@@ -26,6 +26,7 @@ type
       var data: TArray<Integer>);
     procedure swap (i, j: Integer; var data: TArray<Integer>);
     procedure QuickSort(var data: TArray<Integer>);
+    procedure InsertionSort(var data: TArray<Integer>);
     procedure BubbleSort(var data: TArray<Integer>);
     procedure DrawBoard(paintbox: TPaintBox; const data: TArray<Integer>);
     procedure DrawItem(paintbox: TPaintBox; index, value: integer);
@@ -108,6 +109,30 @@ begin
           break;
       end;
   DrawResults (SwapPaintBox, 'BubleSort', Length(data), sw.Elapsed, SwapCounter );
+end;
+
+procedure TForm1.InsertionSort  (var data: TArray<Integer>);
+var
+  i: Integer;
+  j: Integer;
+  sw: TStopwatch;
+  mini: Integer;
+  minv: Integer;
+begin
+  sw := TStopwatch.StartNew;
+  for i := 0 to Length(data)-1 do begin
+    mini := i;  minv := data[i];
+    for j := i+1 to Length(data)-1 do begin
+      if data[j] < minv then begin
+        mini := j;  minv := data[j];
+      end;
+    end;
+    if mini<>i then
+      swap( i, mini, data );
+    if not(EnableSorting) then
+      break;
+  end;
+  DrawResults (SwapPaintBox, Length(data), sw.Elapsed, SwapCounter );
 end;
 
 procedure TForm1.QuickSort (var data: TArray<Integer>);
