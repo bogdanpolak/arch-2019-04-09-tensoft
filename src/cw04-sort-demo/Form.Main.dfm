@@ -55,16 +55,16 @@ object Form1: TForm1
       TabOrder = 0
       OnClick = Button1Click
     end
-  end
-  object tmrReady: TTimer
-    Interval = 1
-    OnTimer = tmrReadyTimer
-    Left = 32
-    Top = 80
-  end
-  object Timer1: TTimer
-    Interval = 100
-    Left = 96
-    Top = 80
+    object Button2: TButton
+      AlignWithMargins = True
+      Left = 127
+      Top = 18
+      Width = 116
+      Height = 25
+      Align = alLeft
+      Caption = 'Button2'
+      TabOrder = 1
+      OnClick = Button2Click
+    end
   end
 end

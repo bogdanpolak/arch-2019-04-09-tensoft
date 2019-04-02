@@ -14,17 +14,18 @@ type
     PaintBox2: TPaintBox;
     GroupBox1: TGroupBox;
     Button1: TButton;
-    tmrReady: TTimer;
-    Timer1: TTimer;
-    procedure tmrReadyTimer(Sender: TObject);
+    Button2: TButton;
     procedure Button1Click(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure Button2Click(Sender: TObject);
   private
     EnableSorting: Boolean;
-    procedure RunSortPrototype;
-    procedure BubbleSort(data: TArray<Integer>);
-    procedure swap (i, j: Integer; data: TArray<Integer>);
-    procedure DrawBoard(paintbox: TPaintBox; data: TArray<Integer>);
+    procedure PrepareSortDemo (paintbox: TPaintBox;
+      var data: TArray<Integer>);
+    procedure swap (i, j: Integer; var data: TArray<Integer>);
+    procedure QuickSort(var data: TArray<Integer>);
+    procedure BubbleSort(var data: TArray<Integer>);
+    procedure DrawBoard(paintbox: TPaintBox; const data: TArray<Integer>);
     procedure DrawItem(paintbox: TPaintBox; index, value: integer);
     procedure GenerateData(var data: TArray<Integer>; items: Integer);
     procedure DrawResults(paintbox: TPaintBox; const msg: string);
@@ -46,8 +47,19 @@ const
   MaxValue = 100;
 
 procedure TForm1.Button1Click(Sender: TObject);
+var
+  data: TArray<Integer>;
 begin
-  RunSortPrototype
+  PrepareSortDemo (Paintbox1, data);
+  BubbleSort (data);
+end;
+
+procedure TForm1.Button2Click(Sender: TObject);
+var
+  data: TArray<Integer>;
+begin
+  PrepareSortDemo (Paintbox2, data);
+  QuickSort (data);
 end;
 
 var
@@ -64,7 +76,7 @@ begin
     QueryPerformanceCounter(endTime64);
 end;
 
-procedure TForm1.swap (i, j: Integer; data: TArray<Integer>);
+procedure TForm1.swap (i, j: Integer; var data: TArray<Integer>);
 var
   v: Integer;
 begin
@@ -74,10 +86,10 @@ begin
   DrawItem (SwapPaintBox, i, data[i]);
   DrawItem (SwapPaintBox, j, data[j]);
   Application.ProcessMessages;
-  WaitMilisecond (1.5);
+  WaitMilisecond (4.5);
 end;
 
-procedure TForm1.BubbleSort (data: TArray<Integer>);
+procedure TForm1.BubbleSort (var data: TArray<Integer>);
 var
   i: Integer;
   j: Integer;
@@ -91,6 +103,39 @@ begin
         if not(EnableSorting) then
           break;
       end;
+  DrawResults (SwapPaintBox, Format('[%d] ',[Length(data)])+sw.Elapsed.ToString);
+end;
+
+procedure TForm1.QuickSort (var data: TArray<Integer>);
+  procedure qsort (idx1, idx2: integer);
+  var
+    i: Integer;
+    j: Integer;
+    mediana: Integer;
+  begin
+    i:=idx1;
+    j:=idx2;
+    mediana:=data[(i+j) div 2];
+    repeat
+      while data[i]<mediana do inc(i);
+      while mediana<data[j] do dec(j);
+      if i<=j then
+      begin
+        swap (i,j, data);
+        inc(i);
+        dec(j);
+      end;
+    until i>j;
+    if EnableSorting then begin
+      if idx1<j then qsort(idx1,j);
+      if i<idx2 then qsort(i,idx2);
+    end;
+  end;
+var
+  sw: TStopwatch;
+begin
+  sw := TStopwatch.StartNew;
+  qsort(0, Length(data)-1);
   DrawResults (SwapPaintBox, Format('[%d] ',[Length(data)])+sw.Elapsed.ToString);
 end;
 
@@ -122,7 +167,7 @@ begin
   c.Rectangle( x, maxhg-(j), x+5, maxhg );
 end;
 
-procedure TForm1.DrawBoard (paintbox: TPaintBox; data: TArray<Integer>);
+procedure TForm1.DrawBoard (paintbox: TPaintBox; const data: TArray<Integer>);
 var
   i: Integer;
 begin
@@ -154,24 +199,16 @@ begin
     data[i] := random(MaxValue)+1;
 end;
 
-procedure TForm1.RunSortPrototype;
+procedure TForm1.PrepareSortDemo(paintbox: TPaintBox;
+  var data: TArray<Integer>);
 var
-  data: TArray<Integer>;
-  paintbox: TPaintBox;
   items: Integer;
 begin
-  paintbox := PaintBox1;
-  EnableSorting := true;
   items := round (paintbox.Width / 6) -1;
   GenerateData (data, items);
-  DrawBoard(paintbox, data);
+  EnableSorting := true;
   SwapPaintBox := paintbox;
-  BubbleSort (data);
-end;
-
-procedure TForm1.tmrReadyTimer(Sender: TObject);
-begin
-  tmrReady.Enabled := false;
+  DrawBoard(paintbox, data);
 end;
 
 end.
