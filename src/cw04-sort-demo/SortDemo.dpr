@@ -2,7 +2,8 @@ program SortDemo;
 
 uses
   Vcl.Forms,
-  Form.Main in 'Form.Main.pas' {Form1};
+  Form.Main in 'Form.Main.pas' {Form1},
+  Colors.Hsl in 'Colors.Hsl.pas';
 
 {$R *.res}
 

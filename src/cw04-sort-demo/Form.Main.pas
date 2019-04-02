@@ -18,13 +18,16 @@ type
     Timer1: TTimer;
     procedure tmrReadyTimer(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
+    EnableSorting: Boolean;
     procedure RunSortPrototype;
     procedure BubbleSort(data: TArray<Integer>);
     procedure swap (i, j: Integer; data: TArray<Integer>);
     procedure DrawBoard(paintbox: TPaintBox; data: TArray<Integer>);
     procedure DrawItem(paintbox: TPaintBox; index, value: integer);
     procedure GenerateData(var data: TArray<Integer>; items: Integer);
+    procedure DrawResults(paintbox: TPaintBox; const msg: string);
   public
     { Public declarations }
   end;
@@ -35,6 +38,9 @@ var
 implementation
 
 {$R *.dfm}
+
+uses
+  System.Diagnostics, Colors.Hsl;
 
 const
   MaxValue = 100;
@@ -75,11 +81,27 @@ procedure TForm1.BubbleSort (data: TArray<Integer>);
 var
   i: Integer;
   j: Integer;
+  sw: TStopwatch;
 begin
+  sw := TStopwatch.StartNew;
   for i := 0 to Length(data)-1 do
     for j := 0 to Length(data)-2 do
-      if data[j] > data [j+1] then
+      if data[j] > data [j+1] then begin
         swap( j, j+1, data );
+        if not(EnableSorting) then
+          break;
+      end;
+  DrawResults (SwapPaintBox, Format('[%d] ',[Length(data)])+sw.Elapsed.ToString);
+end;
+
+function GetColor (value: integer): TColor;
+var
+  Hue: Integer;
+  col: TRgbColor;
+begin
+  Hue := round(value*256/(MaxValue+1));
+  col := HSLtoRGB (Hue, 220, 120);
+  Result := RGB (col.r, col.g, col.b);
 end;
 
 procedure TForm1.DrawItem (paintbox: TPaintBox; index, value: integer);
@@ -96,7 +118,7 @@ begin
   c.Pen.Style := psClear;
   c.Brush.Color := paintbox.Color;
   c.Rectangle( x, 0, x+5, maxhg-(j) );
-  c.Brush.Color := RGB (255, 128, 128);
+  c.Brush.Color := GetColor(value);
   c.Rectangle( x, maxhg-(j), x+5, maxhg );
 end;
 
@@ -104,8 +126,22 @@ procedure TForm1.DrawBoard (paintbox: TPaintBox; data: TArray<Integer>);
 var
   i: Integer;
 begin
+  paintbox.Canvas.Brush.Color := paintbox.Color;
+  paintbox.Canvas.FillRect( Rect(0,0,paintbox.Width,paintbox.Height) );
   for i := 0 to Length(data)-1 do
     DrawItem(paintbox, i, data[i]);
+end;
+
+procedure TForm1.DrawResults (paintbox: TPaintBox; const msg: string);
+begin
+  paintbox.Canvas.Brush.Style := bsClear;
+  paintbox.Canvas.Font.Height := 20;
+  paintbox.Canvas.TextOut( 15,10, msg );
+end;
+
+procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+begin
+  EnableSorting := false;
 end;
 
 procedure TForm1.GenerateData (var data: TArray<Integer>; items:Integer);
@@ -125,6 +161,7 @@ var
   items: Integer;
 begin
   paintbox := PaintBox1;
+  EnableSorting := true;
   items := round (paintbox.Width / 6) -1;
   GenerateData (data, items);
   DrawBoard(paintbox, data);
@@ -135,7 +172,6 @@ end;
 procedure TForm1.tmrReadyTimer(Sender: TObject);
 begin
   tmrReady.Enabled := false;
-  RunSortPrototype;
 end;
 
 end.
