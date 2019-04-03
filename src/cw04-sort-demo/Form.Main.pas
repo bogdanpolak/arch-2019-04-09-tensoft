@@ -108,7 +108,7 @@ begin
         if not(EnableSorting) then
           break;
       end;
-  DrawResults (SwapPaintBox, 'BubleSort', Length(data), sw.Elapsed, SwapCounter );
+  DrawResults (SwapPaintBox, 'BubbleSort', Length(data), sw.Elapsed, SwapCounter );
 end;
 
 procedure TForm1.InsertionSort  (var data: TArray<Integer>);
@@ -132,7 +132,7 @@ begin
     if not(EnableSorting) then
       break;
   end;
-  DrawResults (SwapPaintBox, Length(data), sw.Elapsed, SwapCounter );
+  DrawResults (SwapPaintBox, 'InsertionSort', Length(data), sw.Elapsed, SwapCounter );
 end;
 
 procedure TForm1.QuickSort (var data: TArray<Integer>);
