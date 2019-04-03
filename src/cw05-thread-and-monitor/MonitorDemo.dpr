@@ -2,8 +2,7 @@ program MonitorDemo;
 
 uses
   Vcl.Forms,
-  Form.Main in 'Form.Main.pas' {Form1},
-  Thread.FileWriter in 'Thread.FileWriter.pas';
+  Form.Main in 'Form.Main.pas' {Form1};
 
 {$R *.res}
 
