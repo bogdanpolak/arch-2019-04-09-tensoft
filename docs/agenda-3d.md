@@ -6,18 +6,18 @@
 	* [x] Enumeratory, polimorfizm, klasy abstrakcyjne i zastosowanie interfejsów
 	* [x] Typy generyczne i kolekcje generyczne
 1. Programowanie wielowątkowe
-	* [ ] Sekcje bezpieczne
-	* [ ] Wielowątkowe pobieranie i przetwarzanie danych na serwerze SQL 
+	* [x] Sekcje bezpieczne
+	* [x] Wielowątkowe pobieranie i przetwarzanie danych na serwerze SQL 
 1. Wymiana informacji między systemami
-	* [ ] Moduł System.JSON - przetwarzanie danych w formacie JSON
-	* [ ] Komponent TXMLDocument - przetwarzanie danych w formacie XML
+	* [x] Moduł System.JSON - przetwarzanie danych w formacie JSON
+	* [x] Komponent TXMLDocument - przetwarzanie danych w formacie XML
 
 # Dzień 2: Komunikacja sieciowa
 
 1. Przegląd protokołów i standardów sieciowych
-	* [ ] Wprowadzenie do protokołu TCP/IP oraz HTTP
-	* [ ] Omówienie mechanizmów sieci WWW
-	* [ ] Specyfikacje HTML, MIME, SSL ,SOAP, REST
+	* [x] Wprowadzenie do protokołu TCP/IP oraz HTTP
+	* [x] Omówienie mechanizmów sieci WWW
+	* [x] Specyfikacje HTML, MIME, SSL ,SOAP, REST
 1. Komponenty Indy - komunikacja TCP
 	* [ ] Komponenty TIdTCPClient i TIdTCPServer
 	* [ ] Planowanie protokołu komunikacyjnego, przygotowanie wiadomości
