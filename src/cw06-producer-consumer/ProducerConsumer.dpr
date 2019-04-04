@@ -1,4 +1,4 @@
-program ThreadedQueue;
+program ProducerConsumer;
 
 uses
   Vcl.Forms,
