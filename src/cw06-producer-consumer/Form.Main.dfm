@@ -29,7 +29,6 @@ object Form1: TForm1
     ItemHeight = 13
     ParentFont = False
     TabOrder = 0
-    ExplicitWidth = 218
   end
   object GroupBox1: TGroupBox
     AlignWithMargins = True
@@ -40,7 +39,6 @@ object Form1: TForm1
     Align = alTop
     Caption = 'GroupBox1'
     TabOrder = 1
-    ExplicitWidth = 218
     object btnAddWriterThread: TButton
       AlignWithMargins = True
       Left = 5
@@ -52,9 +50,20 @@ object Form1: TForm1
       TabOrder = 0
       OnClick = btnAddWriterThreadClick
     end
+    object btnTermianteProducers: TButton
+      AlignWithMargins = True
+      Left = 175
+      Top = 18
+      Width = 154
+      Height = 31
+      Align = alLeft
+      Caption = 'btnTermianteProducers'
+      TabOrder = 1
+      OnClick = btnTermianteProducersClick
+    end
   end
-  object tmrReader: TTimer
-    OnTimer = tmrReaderTimer
+  object tmrConsumer: TTimer
+    OnTimer = tmrConsumerTimer
     Left = 72
     Top = 88
   end

@@ -11,15 +11,17 @@ uses
 
 type
   TForm1 = class(TForm)
-    tmrReader: TTimer;
+    tmrConsumer: TTimer;
     ListBox1: TListBox;
     GroupBox1: TGroupBox;
     btnAddWriterThread: TButton;
+    btnTermianteProducers: TButton;
     procedure FormCreate(Sender: TObject);
-    procedure tmrReaderTimer(Sender: TObject);
+    procedure tmrConsumerTimer(Sender: TObject);
     procedure btnAddWriterThreadClick(Sender: TObject);
+    procedure btnTermianteProducersClick(Sender: TObject);
   private
-    FQueue: TThreadedQueue<String>;
+    MainQueue: TThreadedQueue<String>;
   public
     { Public declarations }
   end;
@@ -49,9 +51,9 @@ type
 constructor TWriterThread.Create(const aWriterName:string;
   aQueue: TThreadedQueue<String>);
 begin
-  inherited Create(false);
   FWriterName := aWriterName;
   FQueue := aQueue;
+  inherited Create(false);
 end;
 
 procedure TWriterThread.Execute;
@@ -83,22 +85,27 @@ var
   n: string;
 begin
   n := GenerateThreadName(btnAddWriterThread);
-  TWriterThread.Create(n,FQueue);
+  TWriterThread.Create(n,MainQueue);
+end;
+
+procedure TForm1.btnTermianteProducersClick(Sender: TObject);
+begin
+  // TODO: Terminate all producer threads
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  FQueue := TThreadedQueue<String>.Create();
+  MainQueue := TThreadedQueue<String>.Create();
 end;
 
-procedure TForm1.tmrReaderTimer(Sender: TObject);
+procedure TForm1.tmrConsumerTimer(Sender: TObject);
 var
   s: string;
   itemCounter: Integer;
 begin
-  itemCounter:=FQueue.QueueSize;
-  while FQueue.QueueSize>0 do
-    s := s + FQueue.PopItem() +', ';
+  itemCounter:=MainQueue.QueueSize;
+  while MainQueue.QueueSize>0 do
+    s := s + MainQueue.PopItem() +', ';
   ListBox1.Items.Add(Format('%2d items | ',[itemCounter])+s);
   ListBox1.ItemIndex := ListBox1.Items.Count-1;
 end;
