@@ -1,0 +1,73 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 433
+  ClientWidth = 671
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Splitter1: TSplitter
+    Left = 252
+    Top = 0
+    Width = 5
+    Height = 433
+    ExplicitHeight = 399
+  end
+  object GroupBox1: TGroupBox
+    AlignWithMargins = True
+    Left = 3
+    Top = 3
+    Width = 249
+    Height = 427
+    Margins.Right = 0
+    Align = alLeft
+    Caption = 'GroupBox1'
+    TabOrder = 0
+    ExplicitLeft = 8
+    ExplicitTop = 0
+    ExplicitHeight = 391
+    object Button1: TButton
+      AlignWithMargins = True
+      Left = 5
+      Top = 18
+      Width = 239
+      Height = 25
+      Align = alTop
+      Caption = 'Button1'
+      TabOrder = 0
+      OnClick = Button1Click
+      ExplicitLeft = 88
+      ExplicitTop = 184
+      ExplicitWidth = 75
+    end
+  end
+  object Memo1: TMemo
+    AlignWithMargins = True
+    Left = 257
+    Top = 3
+    Width = 411
+    Height = 427
+    Margins.Left = 0
+    Align = alClient
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Consolas'
+    Font.Style = []
+    Lines.Strings = (
+      'Memo1')
+    ParentFont = False
+    TabOrder = 1
+    ExplicitLeft = 296
+    ExplicitTop = 88
+    ExplicitWidth = 185
+    ExplicitHeight = 89
+  end
+end
