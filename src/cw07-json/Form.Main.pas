@@ -5,10 +5,15 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.JSON,
-  REST.JsonReflect,
   REST.Json,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
-  Vcl.ExtCtrls;
+  Vcl.ExtCtrls,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error,
+  FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool,
+  FireDAC.Stan.Async, FireDAC.Phys, FireDAC.Phys.SQLite, FireDAC.Phys.SQLiteDef,
+  FireDAC.Stan.ExprFuncs, FireDAC.VCLUI.Wait, FireDAC.Stan.Param, FireDAC.DatS,
+  FireDAC.DApt.Intf, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client;
 
 type
   TForm1 = class(TForm)
@@ -21,9 +26,14 @@ type
     Label2: TLabel;
     Button3: TButton;
     Label3: TLabel;
+    Button4: TButton;
+    Label4: TLabel;
+    FDConnection1: TFDConnection;
+    FDQuery1: TFDQuery;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -36,6 +46,8 @@ var
 implementation
 
 {$R *.dfm}
+
+uses Utils.JSON.FromDataset;
 
 const
   data: array of string = [
@@ -143,8 +155,6 @@ end;
 procedure TForm1.Button3Click(Sender: TObject);
 var
   Person: TPerson;
-  JSONMarshal: REST.JsonReflect.TJSONMarshal;
-  JSONUnMarshal: REST.JsonReflect.TJSONUnMarshal;
   j: TJSONObject;
 begin
   Person := TPerson.Create;
@@ -162,6 +172,19 @@ begin
   Memo1.Lines.Add(Format('  TPerson begin FullName: %s; Height: %d end;',
     [QuotedStr(Person.FullName), Person.Height]));
   Person.Free;
+end;
+
+procedure TForm1.Button4Click(Sender: TObject);
+var
+  jData: TJSONArray;
+  sql: string;
+begin
+  Memo1.Lines.Add('------------------------------------------------------');
+  sql := 'SELECT OrderID,CustomerID,OrderDate,ShipVia,Freight FROM Orders '+
+    'WHERE {year(OrderDate)}=1996 and {month(OrderDate)}=9';
+  FDQuery1.Open(sql);
+  jData := DataSetToJson(FDQuery1);
+  WriteJsonDataToMemo (jData, Memo1);
 end;
 
 end.

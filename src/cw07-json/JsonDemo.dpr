@@ -2,7 +2,8 @@ program JsonDemo;
 
 uses
   Vcl.Forms,
-  Form.Main in 'Form.Main.pas' {Form1};
+  Form.Main in 'Form.Main.pas' {Form1},
+  Utils.JSON.FromDataset in 'Utils.JSON.FromDataset.pas';
 
 {$R *.res}
 

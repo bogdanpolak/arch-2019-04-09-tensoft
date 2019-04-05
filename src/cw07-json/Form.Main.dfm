@@ -31,6 +31,8 @@ object Form1: TForm1
     Align = alLeft
     Caption = 'GroupBox1'
     TabOrder = 0
+    ExplicitLeft = 0
+    ExplicitTop = 8
     object Label1: TLabel
       AlignWithMargins = True
       Left = 5
@@ -62,11 +64,24 @@ object Form1: TForm1
       Left = 5
       Top = 167
       Width = 156
+      Height = 26
+      Margins.Top = 0
+      Margins.Bottom = 10
+      Align = alTop
+      Caption = 'Zaminia obiektu na JSON i odwrotnie'
+      WordWrap = True
+      ExplicitWidth = 126
+    end
+    object Label4: TLabel
+      AlignWithMargins = True
+      Left = 5
+      Top = 234
+      Width = 156
       Height = 13
       Margins.Top = 0
       Margins.Bottom = 10
       Align = alTop
-      Caption = 'Label3'
+      Caption = 'Label4'
       WordWrap = True
       ExplicitWidth = 31
     end
@@ -110,6 +125,20 @@ object Form1: TForm1
       ExplicitTop = 224
       ExplicitWidth = 75
     end
+    object Button4: TButton
+      AlignWithMargins = True
+      Left = 5
+      Top = 206
+      Width = 156
+      Height = 25
+      Align = alTop
+      Caption = 'Button4'
+      TabOrder = 3
+      OnClick = Button4Click
+      ExplicitLeft = 48
+      ExplicitTop = 200
+      ExplicitWidth = 75
+    end
   end
   object Memo1: TMemo
     AlignWithMargins = True
@@ -127,5 +156,21 @@ object Form1: TForm1
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 1
+    ExplicitLeft = 169
+    ExplicitTop = 8
+  end
+  object FDConnection1: TFDConnection
+    Params.Strings = (
+      'ConnectionDef=SQLite_Demo')
+    LoginPrompt = False
+    Left = 224
+    Top = 96
+  end
+  object FDQuery1: TFDQuery
+    Connection = FDConnection1
+    SQL.Strings = (
+      '')
+    Left = 224
+    Top = 152
   end
 end
