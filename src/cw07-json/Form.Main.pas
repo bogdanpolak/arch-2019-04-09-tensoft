@@ -5,6 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.JSON,
+  REST.JsonReflect,
+  REST.Json,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ExtCtrls;
 
@@ -21,6 +23,7 @@ type
     Label3: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -33,7 +36,6 @@ var
 implementation
 
 {$R *.dfm}
-
 
 const
   data: array of string = [
@@ -112,6 +114,54 @@ begin
     raise Exception.Create('Not a valid JSON');
   JsonDelphiVersions.Add(delphi2009);
   WriteJsonDataToMemo(JsonDelphiVersions, Memo1);
+end;
+
+type
+  TPerson = class
+  private
+    FFullName: string;
+    FHeight: integer;
+  public
+    property FullName: string read FFullName write FFullName;
+    property Height: integer read FHeight write FHeight;
+  end;
+
+TJsonClassHelper = class helper for TJson
+  class function CreateObjectFromJSON<T:class, constructor> (jsobj: TJSONObject): T;
+end;
+class function TJsonClassHelper.CreateObjectFromJSON<T>(jsobj: TJSONObject): T;
+begin
+  Result := T.Create;
+  try
+    TJson.JsonToObject(Result,jsobj);
+  except on E: Exception do
+    FreeAndNil(Result);
+  end;
+end;
+
+
+procedure TForm1.Button3Click(Sender: TObject);
+var
+  Person: TPerson;
+  JSONMarshal: REST.JsonReflect.TJSONMarshal;
+  JSONUnMarshal: REST.JsonReflect.TJSONUnMarshal;
+  j: TJSONObject;
+begin
+  Person := TPerson.Create;
+  Person.FullName := 'Bogdan Polak';
+  Person.Height := 182;
+  Memo1.Lines.Add('------------------------------------------------------');
+  j := TJson.ObjectToJsonObject(Person);
+  Person.Free;
+  Memo1.Lines.Add('  Obiekt jako JSON: '+j.ToString);
+  j.Free;
+  // -----
+  j := TJSONObject.ParseJSONValue('{"fullName":"Tom Cruise","height":172}') as TJSONObject;
+  Person := TJson.CreateObjectFromJSON<TPerson>(j);
+  // Person := TJson.JsonToObject<TPerson>(j);
+  Memo1.Lines.Add(Format('  TPerson begin FullName: %s; Height: %d end;',
+    [QuotedStr(Person.FullName), Person.Height]));
+  Person.Free;
 end;
 
 end.

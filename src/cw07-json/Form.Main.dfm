@@ -105,6 +105,7 @@ object Form1: TForm1
       Align = alTop
       Caption = 'Button3'
       TabOrder = 2
+      OnClick = Button3Click
       ExplicitLeft = 91
       ExplicitTop = 224
       ExplicitWidth = 75
