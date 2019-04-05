@@ -77,13 +77,26 @@ object Form1: TForm1
       Left = 5
       Top = 234
       Width = 156
-      Height = 13
+      Height = 26
       Margins.Top = 0
       Margins.Bottom = 10
       Align = alTop
-      Caption = 'Label4'
+      Caption = 'Zamiana TDataSet na TJSONArray'
       WordWrap = True
-      ExplicitWidth = 31
+      ExplicitWidth = 106
+    end
+    object Label5: TLabel
+      AlignWithMargins = True
+      Left = 5
+      Top = 301
+      Width = 156
+      Height = 39
+      Margins.Top = 0
+      Margins.Bottom = 10
+      Align = alTop
+      Caption = 'Zamiana TDataSet na TJSONArray za pomoc'#261' TFDBatchMove'
+      WordWrap = True
+      ExplicitWidth = 116
     end
     object Button1: TButton
       AlignWithMargins = True
@@ -95,7 +108,6 @@ object Form1: TForm1
       Caption = 'Button1'
       TabOrder = 0
       OnClick = Button1Click
-      ExplicitWidth = 239
     end
     object Button2: TButton
       AlignWithMargins = True
@@ -107,9 +119,6 @@ object Form1: TForm1
       Caption = 'Button2'
       TabOrder = 1
       OnClick = Button2Click
-      ExplicitLeft = 48
-      ExplicitTop = 200
-      ExplicitWidth = 75
     end
     object Button3: TButton
       AlignWithMargins = True
@@ -121,9 +130,6 @@ object Form1: TForm1
       Caption = 'Button3'
       TabOrder = 2
       OnClick = Button3Click
-      ExplicitLeft = 91
-      ExplicitTop = 224
-      ExplicitWidth = 75
     end
     object Button4: TButton
       AlignWithMargins = True
@@ -135,8 +141,33 @@ object Form1: TForm1
       Caption = 'Button4'
       TabOrder = 3
       OnClick = Button4Click
-      ExplicitLeft = 48
-      ExplicitTop = 200
+    end
+    object Button5: TButton
+      AlignWithMargins = True
+      Left = 5
+      Top = 273
+      Width = 156
+      Height = 25
+      Align = alTop
+      Caption = 'Button5'
+      TabOrder = 4
+      OnClick = Button5Click
+      ExplicitLeft = 40
+      ExplicitTop = 296
+      ExplicitWidth = 75
+    end
+    object btnClearMemo: TButton
+      AlignWithMargins = True
+      Left = 5
+      Top = 397
+      Width = 156
+      Height = 25
+      Align = alBottom
+      Caption = 'btnClearMemo'
+      TabOrder = 5
+      OnClick = btnClearMemoClick
+      ExplicitLeft = 91
+      ExplicitTop = 232
       ExplicitWidth = 75
     end
   end
@@ -156,8 +187,8 @@ object Form1: TForm1
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 1
-    ExplicitLeft = 169
-    ExplicitTop = 8
+    ExplicitLeft = 177
+    ExplicitTop = -2
   end
   object FDConnection1: TFDConnection
     Params.Strings = (

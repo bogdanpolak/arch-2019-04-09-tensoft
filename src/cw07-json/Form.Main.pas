@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.JSON,
-  REST.Json,
+  REST.JSON,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
   Vcl.ExtCtrls,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error,
@@ -30,10 +30,15 @@ type
     Label4: TLabel;
     FDConnection1: TFDConnection;
     FDQuery1: TFDQuery;
+    Button5: TButton;
+    Label5: TLabel;
+    btnClearMemo: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
+    procedure Button5Click(Sender: TObject);
+    procedure btnClearMemoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -47,11 +52,15 @@ implementation
 
 {$R *.dfm}
 
-uses Utils.JSON.FromDataset;
+uses
+  Utils.JSON.FromDataset,
+  FireDAC.Comp.BatchMove.DataSet,
+  FireDAC.Comp.BatchMove.JSON,
+  FireDAC.Comp.BatchMove;
 
 const
-  data: array of string = [
-    '"release=2018-11-21","product=10.3 Rio","ver=26.0","bds=20","months=20","codename=Carnival"',
+  Data: array of string =
+    ['"release=2018-11-21","product=10.3 Rio","ver=26.0","bds=20","months=20","codename=Carnival"',
     '"release=2017-03-22","product=10.2 Tokyo","ver=25.0","bds=19","months=11","codename=Godzilla"',
     '"release=2016-04-20","product=10.1 Berlin","ver=24.0","bds=18","months=8","codename=Big Ben"',
     '"release=2015-08-31","product=10.0 Seattle","ver=23.0","bds=17","months=5","codename=Aitana"',
@@ -63,8 +72,7 @@ const
     '"release=2012-09-03","product=XE3","ver=17.0","bds=10","months=12","codename=WaterDragon"',
     '"release=2011-09-02","product=XE2","ver=16.0","bds=9","months=13","codename=Pulsar"',
     '"release=2010-08-30","product=XE","ver=15.0","bds=8","months=12","codename=Fulcrum"',
-    '"release=2009-08-15","product=2010","ver=14.0","bds=7","months=9","codename=Weaver"'
-  ];
+    '"release=2009-08-15","product=2010","ver=14.0","bds=7","months=9","codename=Weaver"'];
 
 function CreateJsonData(): TJSONArray;
 var
@@ -74,9 +82,9 @@ var
 begin
   Result := TJSONArray.Create;
   sl := TStringList.Create;
-  for i := 1 to High(data) do
+  for i := 1 to High(Data) do
   begin
-    sl.CommaText := data[i];
+    sl.CommaText := Data[i];
     jProduct := TJSONObject.Create;
     jProduct.AddPair('product', sl.Values['product']);
     jProduct.AddPair('release', sl.Values['release']);
@@ -85,15 +93,20 @@ begin
     jProduct.AddPair('codename', sl.Values['codename']);
     Result.AddElement(jProduct);
   end;
-  sl.Free;  // TODO: try-finally
+  sl.Free; // TODO: try-finally
 end;
 
-procedure WriteJsonDataToMemo (data: TJSONArray; aMemo: TMemo);
+procedure WriteJsonDataToMemo(Data: TJSONArray; aMemo: TMemo);
 var
   jv: TJSONValue;
 begin
-  for jv in data do
+  for jv in Data do
     aMemo.Lines.Add('   ' + (jv as TJSONObject).ToString);
+end;
+
+procedure TForm1.btnClearMemoClick(Sender: TObject);
+begin
+  Memo1.Clear;
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
@@ -102,7 +115,7 @@ var
 begin
   Memo1.Lines.Add('------------------------------------------------------');
   JsonDelphiVersions := CreateJsonData();
-  WriteJsonDataToMemo (JsonDelphiVersions, Memo1);
+  WriteJsonDataToMemo(JsonDelphiVersions, Memo1);
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
@@ -113,14 +126,8 @@ var
 begin
   Memo1.Lines.Add('------------------------------------------------------');
   JsonDelphiVersions := CreateJsonData();
-  s := '{'+
-    '"product":"2009",'+
-    '"release":"2008-09-25",'+
-    '"ver":"12.0",'+
-    '"bdsver":"6",'+
-    '"months":14,'+
-    '"codename":"Tiburón"'+
-  '}';
+  s := '{' + '"product":"2009",' + '"release":"2008-09-25",' + '"ver":"12.0",' +
+    '"bdsver":"6",' + '"months":14,' + '"codename":"Tiburón"' + '}';
   delphi2009 := TJSONObject.ParseJSONValue(s) as TJSONObject;
   if not Assigned(delphi2009) then
     raise Exception.Create('Not a valid JSON');
@@ -132,25 +139,27 @@ type
   TPerson = class
   private
     FFullName: string;
-    FHeight: integer;
+    FHeight: Integer;
   public
     property FullName: string read FFullName write FFullName;
-    property Height: integer read FHeight write FHeight;
+    property Height: Integer read FHeight write FHeight;
   end;
 
-TJsonClassHelper = class helper for TJson
-  class function CreateObjectFromJSON<T:class, constructor> (jsobj: TJSONObject): T;
-end;
+  TJsonClassHelper = class helper for TJson
+    class function CreateObjectFromJSON<T: class, constructor>
+      (jsobj: TJSONObject): T;
+  end;
+
 class function TJsonClassHelper.CreateObjectFromJSON<T>(jsobj: TJSONObject): T;
 begin
   Result := T.Create;
   try
-    TJson.JsonToObject(Result,jsobj);
-  except on E: Exception do
-    FreeAndNil(Result);
+    TJson.JsonToObject(Result, jsobj);
+  except
+    on E: Exception do
+      FreeAndNil(Result);
   end;
 end;
-
 
 procedure TForm1.Button3Click(Sender: TObject);
 var
@@ -163,10 +172,11 @@ begin
   Memo1.Lines.Add('------------------------------------------------------');
   j := TJson.ObjectToJsonObject(Person);
   Person.Free;
-  Memo1.Lines.Add('  Obiekt jako JSON: '+j.ToString);
+  Memo1.Lines.Add('  Obiekt jako JSON: ' + j.ToString);
   j.Free;
   // -----
-  j := TJSONObject.ParseJSONValue('{"fullName":"Tom Cruise","height":172}') as TJSONObject;
+  j := TJSONObject.ParseJSONValue('{"fullName":"Tom Cruise","height":172}')
+    as TJSONObject;
   Person := TJson.CreateObjectFromJSON<TPerson>(j);
   // Person := TJson.JsonToObject<TPerson>(j);
   Memo1.Lines.Add(Format('  TPerson begin FullName: %s; Height: %d end;',
@@ -180,11 +190,49 @@ var
   sql: string;
 begin
   Memo1.Lines.Add('------------------------------------------------------');
-  sql := 'SELECT OrderID,CustomerID,OrderDate,ShipVia,Freight FROM Orders '+
+  sql := 'SELECT OrderID,CustomerID,OrderDate,ShipVia,Freight FROM Orders ' +
     'WHERE {year(OrderDate)}=1996 and {month(OrderDate)}=9';
   FDQuery1.Open(sql);
   jData := DataSetToJson(FDQuery1);
-  WriteJsonDataToMemo (jData, Memo1);
+  WriteJsonDataToMemo(jData, Memo1);
+end;
+
+procedure TForm1.Button5Click(Sender: TObject);
+var
+  jsData: TJSONArray;
+  aOwner: TComponent;
+  bmDatasetReader: TFDBatchMoveDataSetReader;
+  bmJSONWriter: TFDBatchMoveJSONWriter;
+  bmMain: TFDBatchMove;
+  sql: string;
+begin
+  sql := 'SELECT OrderID,CustomerID,OrderDate,ShipVia,Freight FROM Orders ' +
+    'WHERE {year(OrderDate)}=1996 and {month(OrderDate)}=9';
+  FDQuery1.Open(sql);
+  // ----
+  jsData := TJSONArray.Create;
+  aOwner := TComponent.Create(Self);
+  try
+    // uses FireDAC.Comp.BatchMove.DataSet
+    bmDatasetReader := TFDBatchMoveDataSetReader.Create(aOwner);
+    bmDatasetReader.DataSet := FDQuery1;
+    // uses FireDAC.Comp.BatchMove.JSON
+    bmJSONWriter := TFDBatchMoveJSONWriter.Create(aOwner);
+    bmJSONWriter.JsonArray := jsData;
+    // uses FireDAC.Comp.BatchMove
+    with TFDBatchMove.Create(aOwner) do
+    begin
+      Reader := bmDatasetReader;
+      Writer := bmJSONWriter;
+      LogFileName := 'Data.log';
+      Execute;
+    end;
+    // --
+    WriteJsonDataToMemo(jsData, Memo1);
+  finally
+    aOwner.Free;
+    jsData.Free;
+  end;
 end;
 
 end.
