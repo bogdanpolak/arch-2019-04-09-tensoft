@@ -19,9 +19,9 @@
 	* [x] Omówienie mechanizmów sieci WWW
 	* [x] Specyfikacje HTML, MIME, SSL ,SOAP, REST
 1. Komponenty Indy - komunikacja TCP
-	* [ ] Komponenty TIdTCPClient i TIdTCPServer
-	* [ ] Planowanie protokołu komunikacyjnego, przygotowanie wiadomości
-	* [ ] Wysyłanie i odbieranie wiadomości
+	* [x] Komponenty TIdTCPClient i TIdTCPServer
+	* [x] Planowanie protokołu komunikacyjnego, przygotowanie wiadomości
+	* [x] Wysyłanie i odbieranie wiadomości
 	* [ ] Tworzenie serwera jako usługi systemowej
 1. Tworzenie serwerów HTTP w technologii WebBroker
 	* [ ] Zasady tworzenia i struktura serwera. 
