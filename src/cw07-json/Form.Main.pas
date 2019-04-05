@@ -3,8 +3,10 @@ unit Form.Main;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Variants, System.Classes, System.JSON,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls,
+  Vcl.ExtCtrls;
 
 type
   TForm1 = class(TForm)
@@ -12,7 +14,13 @@ type
     Memo1: TMemo;
     Splitter1: TSplitter;
     Button1: TButton;
+    Button2: TButton;
+    Label1: TLabel;
+    Label2: TLabel;
+    Button3: TButton;
+    Label3: TLabel;
     procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -26,43 +34,84 @@ implementation
 
 {$R *.dfm}
 
-uses
-  System.JSON;
 
 const
   data: array of string = [
-    // ver: Delphi conditional VER
-    // prod: Product Name
-    // prVer: Product Version
-    // pgVer: Package Version
-    // coVer: CompilerVersion
-    '"ver=VER330","prod=10.3 Rio","prVer=26","pgVer=260","coVer=33.0"',
-    '"ver=VER320","prod=10.2 Tokyo","prVer=25","pgVer=250","coVer=32.0"',
-    '"ver=VER310","prod=10.1 Berlin","prVer=24","pgVer=240","coVer=31.0"',
-    '"ver=VER300","prod=10 Seattle","prVer=23","pgVer=230","coVer=30.0"',
-    '"ver=VER290","prod=XE8","prVer=22","pgVer=220","coVer=29.0"',
-    '"ver=VER280","prod=XE7","prVer=21","pgVer=210","coVer=28.0"',
-    '"ver=VER270","prod=XE6","prVer=20","pgVer=200","coVer=27.0"',
-    '"ver=VER260","prod=XE5","prVer=19","pgVer=190","coVer=26.0"',
-    '"ver=VER250","prod=XE4","prVer=18","pgVer=180","coVer=25.0"'
+    '"release=2018-11-21","product=10.3 Rio","ver=26.0","bds=20","months=20","codename=Carnival"',
+    '"release=2017-03-22","product=10.2 Tokyo","ver=25.0","bds=19","months=11","codename=Godzilla"',
+    '"release=2016-04-20","product=10.1 Berlin","ver=24.0","bds=18","months=8","codename=Big Ben"',
+    '"release=2015-08-31","product=10.0 Seattle","ver=23.0","bds=17","months=5","codename=Aitana"',
+    '"release=2015-04-07","product=XE8","ver=22.0","bds=16","months=7","codename=Elbrus"',
+    '"release=2014-09-02","product=XE7","ver=21.0","bds=15","months=5","codename=Carpathia"',
+    '"release=2014-04-15","product=XE6","ver=20.0","bds=14","months=7","codename=Proteus"',
+    '"release=2013-09-11","product=XE5","ver=19.0","bds=12","months=5","codename=Zephyr"',
+    '"release=2013-04-22","product=XE4","ver=18.0","bds=11","months=7","codename=Quintessence"',
+    '"release=2012-09-03","product=XE3","ver=17.0","bds=10","months=12","codename=WaterDragon"',
+    '"release=2011-09-02","product=XE2","ver=16.0","bds=9","months=13","codename=Pulsar"',
+    '"release=2010-08-30","product=XE","ver=15.0","bds=8","months=12","codename=Fulcrum"',
+    '"release=2009-08-15","product=2010","ver=14.0","bds=7","months=9","codename=Weaver"'
   ];
+
+function CreateJsonData(): TJSONArray;
+var
+  i: Integer;
+  sl: TStringList;
+  jProduct: TJSONObject;
+begin
+  Result := TJSONArray.Create;
+  sl := TStringList.Create;
+  for i := 1 to High(data) do
+  begin
+    sl.CommaText := data[i];
+    jProduct := TJSONObject.Create;
+    jProduct.AddPair('product', sl.Values['product']);
+    jProduct.AddPair('release', sl.Values['release']);
+    jProduct.AddPair('ver', sl.Values['ver']);
+    jProduct.AddPair('months', TJSONNumber.Create((sl.Values['months'])));
+    jProduct.AddPair('codename', sl.Values['codename']);
+    Result.AddElement(jProduct);
+  end;
+  sl.Free;  // TODO: try-finally
+end;
+
+procedure WriteJsonDataToMemo (data: TJSONArray; aMemo: TMemo);
+var
+  jv: TJSONValue;
+begin
+  for jv in data do
+    aMemo.Lines.Add('   ' + (jv as TJSONObject).ToString);
+end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 var
-  jVersions: TJSONArray;
-  i: Integer;
-  sl: TStringList;
-  jv: TJSONValue;
+  JsonDelphiVersions: TJSONArray;
 begin
-  jVersions := TJSONArray.Create;
-  sl := TStringList.Create;
-  for i := 1 to High(data) do begin
-    sl.CommaText := data[i];
-    jVersions.Add(sl.Values['prod']);
-  end;
-  for jv in jVersions do
-    Memo1.Lines.Add('   '+jv.Value);
-  sl.Free;  // TODO: try-finally
+  Memo1.Lines.Add('------------------------------------------------------');
+  JsonDelphiVersions := CreateJsonData();
+  WriteJsonDataToMemo (JsonDelphiVersions, Memo1);
+end;
+
+procedure TForm1.Button2Click(Sender: TObject);
+var
+  JsonDelphiVersions: TJSONArray;
+  s: string;
+  delphi2009: TJSONObject;
+begin
+  Memo1.Lines.Add('------------------------------------------------------');
+  JsonDelphiVersions := CreateJsonData();
+  s := '{'+
+    '"product":"2009",'+
+    '"release":"2008-09-25",'+
+    '"ver":"12.0",'+
+    '"bdsver":"6",'+
+    '"months":14,'+
+    '"codename":"Tiburón"'+
+  '}';
+  delphi2009 := TJSONObject.ParseJSONValue(s) as TJSONObject;
+  if not Assigned(delphi2009) then
+    raise Exception.Create('Not a valid JSON');
+  JsonDelphiVersions.Add(delphi2009);
+  WriteJsonDataToMemo(JsonDelphiVersions, Memo1);
 end;
 
 end.
