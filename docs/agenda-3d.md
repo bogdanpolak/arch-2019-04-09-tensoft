@@ -22,10 +22,10 @@
 	* [x] Komponenty TIdTCPClient i TIdTCPServer
 	* [x] Planowanie protokołu komunikacyjnego, przygotowanie wiadomości
 	* [x] Wysyłanie i odbieranie wiadomości
-	* [ ] Tworzenie serwera jako usługi systemowej
+	* [x] Tworzenie serwera jako usługi systemowej
 1. Tworzenie serwerów HTTP w technologii WebBroker
-	* [ ] Zasady tworzenia i struktura serwera. 
-	* [ ] Przetwarzania parametrów. 
+	* [x] Zasady tworzenia i struktura serwera. 
+	* [x] Przetwarzania parametrów. 
 	* [ ] Wysyłanie odpowiedzi tekstowej i binarnej.
 	* [ ] Typ wiadomości HTTP i definicje MIME - standardy kodowania wiadomości tekstowych i binarnych
 	* [ ] Przesyłanie danych relacyjnych z bazy SQL
