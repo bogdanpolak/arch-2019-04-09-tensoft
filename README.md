@@ -1,11 +1,7 @@
-﻿# Repozytorium szkoleniowe
+﻿# Repozytorium szkoleniowe TenSoft - Delphi
 
 ## Praca zespołowa
 
 * [Konfiguracja komputera oraz zadanie startowe](./docs/Starter.md)
-* [Nauka Git-a](./docs/GitLearn.md)
-
-## Czysty kod
-
-* Zasady Czystego Kodu
-	* [Artykuł: CleanCode wg, Robert C. Martin ](./docs/RobertMartinCleanCode.md)
+* [Dobre pratyki programowania w Delphi](./docs/GoodPractices.md)
+* [Książka: CleanCode - Robert C. Martin ](./docs/RobertMartinCleanCode.md)
