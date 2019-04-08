@@ -29,8 +29,6 @@ object Form1: TForm1
     Align = alLeft
     Caption = 'GroupBox1'
     TabOrder = 0
-    ExplicitLeft = 0
-    ExplicitTop = 8
     object Button1: TButton
       AlignWithMargins = True
       Left = 5
@@ -41,7 +39,6 @@ object Form1: TForm1
       Caption = 'Button1'
       TabOrder = 0
       OnClick = Button1Click
-      ExplicitLeft = 4
     end
   end
   object Memo1: TMemo
@@ -62,7 +59,6 @@ object Form1: TForm1
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 1
-    ExplicitWidth = 433
   end
   object XMLDocument1: TXMLDocument
     Left = 336
