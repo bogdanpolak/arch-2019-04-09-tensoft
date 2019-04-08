@@ -2,7 +2,8 @@ program XmlDemo;
 
 uses
   Vcl.Forms,
-  Form.Main in 'Form.Main.pas' {Form1};
+  Form.Main in 'Form.Main.pas' {Form1},
+  Helper.TDataSet in 'Helper.TDataSet.pas';
 
 {$R *.res}
 

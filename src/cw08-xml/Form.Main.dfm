@@ -29,9 +29,8 @@ object Form1: TForm1
     Align = alLeft
     Caption = 'GroupBox1'
     TabOrder = 0
-    ExplicitLeft = 192
-    ExplicitTop = 112
-    ExplicitHeight = 105
+    ExplicitLeft = 0
+    ExplicitTop = 8
     object Button1: TButton
       AlignWithMargins = True
       Left = 5
@@ -68,5 +67,18 @@ object Form1: TForm1
   object XMLDocument1: TXMLDocument
     Left = 336
     Top = 176
+  end
+  object FDConnection1: TFDConnection
+    Params.Strings = (
+      'ConnectionDef=SQLite_Demo')
+    Connected = True
+    LoginPrompt = False
+    Left = 235
+    Top = 151
+  end
+  object FDQuery1: TFDQuery
+    Connection = FDConnection1
+    Left = 235
+    Top = 207
   end
 end
