@@ -41,17 +41,36 @@ implementation
 uses Helper.TDataSet;
 
 procedure TForm1.Button1Click(Sender: TObject);
+var
+  XMLDoc: IXMLDocument;
+  root: IXMLNode;
+  ss: TStringStream;
 begin
   FDQuery1.Open('SELECT {year(orderdate)} as Year, ' +
     '{month(OrderDate)} as Month, count(*) as OrderCount FROM {id Orders}' +
     'GROUP BY {year(orderdate)}, {month(OrderDate)}');
+  XMLDoc := NewXMLDocument();
+  root := XMLDoc.AddChild('orders-by-month');
   FDQuery1.WhileNotEof(
     procedure()
+    var
+      order: IXMLNode;
     begin
+      order := root.AddChild('order');
+      order.Attributes['year'] := FDQuery1.FieldByName('Year').AsInteger;
+      order.Attributes['month'] := FDQuery1.FieldByName('Month').AsInteger;
+      order.Text := FDQuery1.FieldByName('OrderCount').AsString;
+      {
       Memo1.Lines.Add(Format('%d-%.2d : %d',
         [FDQuery1.FieldByName('Year').AsInteger, FDQuery1.FieldByName('Month')
         .AsInteger, FDQuery1.FieldByName('OrderCount').AsInteger]))
+      }
     end);
+  ss := TStringStream.Create;
+  XMLDoc.SaveToStream(ss);
+  Memo1.Lines.Add('--------------------------------------------');
+  Memo1.Lines.Add(ss.DataString);
+  ss.Free;
 end;
 
 end.
