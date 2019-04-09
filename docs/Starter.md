@@ -64,11 +64,11 @@
 
 ---
 
-* A:
-* B:
-* C: 
-* D:
+* A:Piotr
+* B: Iwona
+* C: Robert rbaranskitensoft
+* D: Anton
 * E: 
-* Trener:
+* Trener: Bogdan Polak (bogdanpolak)
 
 ---
