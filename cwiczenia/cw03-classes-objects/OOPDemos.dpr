@@ -16,13 +16,13 @@ uses
 begin
   try
     WriteLn('ex: 1 --------------------------------------');
-    Execute_VirtualMetodsDemo;
+    // Execute_VirtualMetodsDemo;
     WriteLn('ex: 2 --------------------------------------');
-    Execute_ClassMembersDemo;
+    // Execute_ClassMembersDemo;
     WriteLn('ex: 3 --------------------------------------');
     Execute_GenericCollectionDemo;
     WriteLn('ex: 4 --------------------------------------');
-    Execute_DependencyInjectionContainerDemo;
+    // Execute_DependencyInjectionContainerDemo;
     // ----------------------------------------
     Write('+--> Press Enter to close ...');
     Readln;
