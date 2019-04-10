@@ -42,26 +42,29 @@ end;
 
 function TOrder.ShipmentWarnng: TShipmentWarning;
 var
-  dt: TDateTime;
+  daysToRequire: Int64;
 begin
-  dt := Now;
   if IsShipped then
     Result := swGreen
-  else if RequiredDate >= dt + 7 then
-    Result := swGreen
-  else if RequiredDate >= dt then
-    Result := swYellow
-  else
-    Result := swRed;
+  else begin
+    daysToRequire := round(int(RequiredDate - Now));
+    if daysToRequire < 0 then
+      Result := swRed
+    else if daysToRequire <=7 then
+      Result := swYellow
+    else
+      Result := swGreen;
+  end;
 end;
 
 function TOrderList.GetOrdersExpectedToShip: TList<TOrder>;
+var
+  o: TOrder;
 begin
   Result := TList<TOrder>.Create();
-  // -----------------------------------------------------------
-  // TODO: Stwórz now¹ listê zamówieñ i przenieœ na ni¹ tylko te
-  //   zamówienia, które: ShipmentWarnng = swRed
-  // -----------------------------------------------------------
+  for o in Self do
+    if o.ShipmentWarnng=swRed then
+      Result.Add(o);
 end;
 
 procedure Execute_GenericCollectionDemo;
@@ -69,22 +72,47 @@ var
   dm: TDataModule1;
   Orders: TOrderList;
   OrdersForShipment: TList<TOrder>;
-  Order: TOrder;
-  ResverShippedDateComparer: IComparer<TOrder>;
+  o: TOrder;
+  addDays: Integer;
+  CompareOrderDateReverse: TComparison<TOrder>;
 begin
   dm := TDataModule1.Create(nil);
   Orders := TOrderList.Create();
   // -----------------------------------------------------------
-  // TODO: dm.dsOrders ==> Orders
+  dm.dsOrders.Open();
+  while not dm.dsOrders.Eof do
+  begin
+    o := TOrder.Create;
+    Orders.Add(o);
+    addDays := 7620;
+    with o do begin
+      OrderID := dm.dsOrdersOrderID.Value;
+      CustomerID := dm.dsOrdersCustomerID.AsString;
+      EmployeeID := dm.dsOrdersEmployeeID.Value;
+      EmployeeName := dm.dsOrdersEmployeeName.Value;
+      OrderDate := dm.dsOrdersOrderDate.Value + addDays;
+      RequiredDate := dm.dsOrdersRequiredDate.Value + addDays;
+      if not dm.dsOrdersShippedDate.IsNull then
+        ShippedDate := dm.dsOrdersShippedDate.Value + addDays
+      else
+        ShippedDate := Null;
+    end;
+    dm.dsOrders.Next;
+  end;
   // -----------------------------------------------------------
   OrdersForShipment := Orders.GetOrdersExpectedToShip;
   Writeln('Total orders: ', Orders.Count);
   Writeln('Orders for shippment: ', OrdersForShipment.Count);
   // -----------------------------------------------------------
-  // TODO: Posortuj wybrane zamówienia (OrdersForShipment) wg
-  //   daty wysy³ki (odwrotnie)
+  CompareOrderDateReverse := function(const Left, Right: TOrder): Integer
+  begin
+    Result := round(int(Right.OrderDate-Left.OrderDate));
+  end;
+  OrdersForShipment.Sort(TComparer<TOrder>.Construct(CompareOrderDateReverse));
   // -----------------------------------------------------------
-  // TODO: Wyœwietl wybrane zamówienia OrdersForShipment
+  for o in OrdersForShipment do
+    Writeln (o.OrderID.ToString+'  '+DateToStr(o.OrderDate)+
+      '  '+DateToStr(o.RequiredDate));
   // -----------------------------------------------------------
   Orders.Free;
   OrdersForShipment.Free;
