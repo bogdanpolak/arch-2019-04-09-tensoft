@@ -15,7 +15,7 @@ type
     PaintBox2: TPaintBox;
     GroupBox1: TGroupBox;
     Button1: TButton;
-    Button2: TButton;
+    Button3: TButton;
     procedure Button1Click(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure Button2Click(Sender: TObject);
@@ -38,6 +38,8 @@ type
     { Public declarations }
   end;
 
+
+
 var
   Form1: TForm1;
 
@@ -46,7 +48,7 @@ implementation
 {$R *.dfm}
 
 uses
-  System.Diagnostics, System.Math, Colors.Hsl;
+  System.Diagnostics, System.Math, Colors.Hsl, Thread.Buble;
 
 const
   MaxValue = 100;
@@ -54,10 +56,13 @@ const
 procedure TForm1.Button1Click(Sender: TObject);
 var
   data: TArray<Integer>;
+  ABuble: TBubleThread;
 begin
   // TODO: Zmieñ na wykonanie w tle (w¹tek roboczy)
-  PrepareSortDemo (Paintbox1, data);
-  BubbleSort (data);
+//  PrepareSortDemo (Paintbox1, data);
+//  BubbleSort (data);
+
+ABuble := TBubleThread.Create(100, PaintBox1);
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);

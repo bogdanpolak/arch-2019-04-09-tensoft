@@ -51,7 +51,7 @@ object Form1: TForm1
       TabOrder = 0
       OnClick = Button1Click
     end
-    object Button2: TButton
+    object Button3: TButton
       AlignWithMargins = True
       Left = 127
       Top = 18

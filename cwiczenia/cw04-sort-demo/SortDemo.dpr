@@ -3,7 +3,8 @@ program SortDemo;
 uses
   Vcl.Forms,
   Form.Main in 'Form.Main.pas' {Form1},
-  Colors.Hsl in 'Colors.Hsl.pas';
+  Colors.Hsl in 'Colors.Hsl.pas',
+  Thread.Buble in 'Thread.Buble.pas';
 
 {$R *.res}
 
