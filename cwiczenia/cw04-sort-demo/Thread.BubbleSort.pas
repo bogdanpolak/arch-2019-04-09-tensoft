@@ -1,4 +1,4 @@
-unit Thread.Buble;
+unit Thread.BubbleSort;
 
 interface
 
@@ -8,7 +8,7 @@ uses
   Thread.Sort;
 
 type
-  TBubleThread = class(TSortThread)
+  TBubbleThread = class(TSortThread)
   protected
     procedure Execute; override;
   end;
@@ -24,7 +24,7 @@ uses
 
 { TBubleThread }
 
-procedure TBubleThread.Execute;
+procedure TBubbleThread.Execute;
 var
   i: Integer;
   j: Integer;

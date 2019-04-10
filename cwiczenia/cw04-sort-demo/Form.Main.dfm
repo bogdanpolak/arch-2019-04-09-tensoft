@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 0
   Top = 0
   Caption = 'Form1'
-  ClientHeight = 502
+  ClientHeight = 603
   ClientWidth = 635
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -11,7 +11,6 @@ object Form1: TForm1
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
-  OnCloseQuery = FormCloseQuery
   PixelsPerInch = 96
   TextHeight = 13
   object PaintBox1: TPaintBox
@@ -29,6 +28,16 @@ object Form1: TForm1
     Width = 629
     Height = 175
     Align = alTop
+  end
+  object PaintBox3: TPaintBox
+    AlignWithMargins = True
+    Left = 3
+    Top = 420
+    Width = 629
+    Height = 175
+    Align = alTop
+    ExplicitLeft = 6
+    ExplicitTop = 247
   end
   object GroupBox1: TGroupBox
     AlignWithMargins = True
@@ -61,6 +70,18 @@ object Form1: TForm1
       Caption = 'Button2'
       TabOrder = 1
       OnClick = Button2Click
+    end
+    object Button3: TButton
+      AlignWithMargins = True
+      Left = 249
+      Top = 18
+      Width = 136
+      Height = 25
+      Align = alLeft
+      Caption = 'Button3'
+      TabOrder = 2
+      OnClick = Button3Click
+      ExplicitTop = 20
     end
   end
   object Timer1: TTimer

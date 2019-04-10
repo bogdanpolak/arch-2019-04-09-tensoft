@@ -17,13 +17,13 @@ type
     Button1: TButton;
     Button2: TButton;
     Timer1: TTimer;
+    Button3: TButton;
+    PaintBox3: TPaintBox;
     procedure Button1Click(Sender: TObject);
-    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure Button2Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
-    EnableSorting: Boolean;
-    SwapCounter: Integer;
   public
     { Public declarations }
   end;
@@ -38,60 +38,33 @@ implementation
 {$R *.dfm}
 
 uses
-  System.Diagnostics, System.Math, Colors.Hsl, Thread.Buble, Thread.Sort,
-  Thread.Quick;
+  Thread.Sort, Thread.BubbleSort, Thread.QuickSort, Thread.InsertionSort;
+
+function ItemsInArray (paintbox:TPaintBox): integer;
+begin
+  Result := paintbox.Width div 6
+end;
 
 procedure TForm1.Button1Click(Sender: TObject);
-var
-  ItemsToSort: Integer;
 begin
-  ItemsToSort := PaintBox1.Width div 6;
-  TBubleThread.Create(ItemsToSort, PaintBox1);
+  TBubbleThread.Create(ItemsInArray(PaintBox1), PaintBox1);
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
-var
-  ItemsToSort: Integer;
 begin
-  ItemsToSort := PaintBox2.Width div 6;
-  TQuickThread.Create(ItemsToSort, PaintBox2);
+  TQuickThread.Create(ItemsInArray(PaintBox2), PaintBox2);
 end;
 
-{
-procedure TForm1.InsertionSort  (var data: TArray<Integer>);
-var
-  i: Integer;
-  j: Integer;
-  sw: TStopwatch;
-  mini: Integer;
-  minv: Integer;
+procedure TForm1.Button3Click(Sender: TObject);
 begin
-  sw := TStopwatch.StartNew;
-  for i := 0 to Length(data)-1 do begin
-    mini := i;  minv := data[i];
-    for j := i+1 to Length(data)-1 do begin
-      if data[j] < minv then begin
-        mini := j;  minv := data[j];
-      end;
-    end;
-    if mini<>i then
-      swap( i, mini, data );
-    if not(EnableSorting) then
-      break;
-  end;
-  DrawResults (SwapPaintBox, 'InsertionSort', Length(data), sw.Elapsed, SwapCounter );
-end;
-}
-
-procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-begin
-  EnableSorting := false;
+  TInsertionThread.Create(ItemsInArray(PaintBox3), PaintBox3);
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
 begin
   Button1.Enabled := not BubbleSortIsWorking;
   Button2.Enabled := not QuickSortIsWorking;
+  Button3.Enabled := not TInsertionThread.IsWorking;
 end;
 
 end.
