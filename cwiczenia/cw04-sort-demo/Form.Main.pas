@@ -38,8 +38,7 @@ implementation
 {$R *.dfm}
 
 uses
-  System.Diagnostics, System.Math, Colors.Hsl, Thread.Buble, Thread.Sort,
-  Thread.Quick;
+  Thread.Sort, Thread.BubbleSort, Thread.QuickSort;
 
 procedure TForm1.Button1Click(Sender: TObject);
 var

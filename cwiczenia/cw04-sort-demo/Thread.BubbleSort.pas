@@ -1,4 +1,4 @@
-unit Thread.Buble;
+unit Thread.BubbleSort;
 
 interface
 

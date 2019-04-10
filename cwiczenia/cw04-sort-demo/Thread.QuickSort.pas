@@ -1,4 +1,4 @@
-unit Thread.Quick;
+unit Thread.QuickSort;
 
 interface
 
