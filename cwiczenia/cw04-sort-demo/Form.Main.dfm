@@ -51,7 +51,7 @@ object Form1: TForm1
       TabOrder = 0
       OnClick = Button1Click
     end
-    object Button3: TButton
+    object Button2: TButton
       AlignWithMargins = True
       Left = 127
       Top = 18
@@ -62,5 +62,11 @@ object Form1: TForm1
       TabOrder = 1
       OnClick = Button2Click
     end
+  end
+  object Timer1: TTimer
+    Interval = 100
+    OnTimer = Timer1Timer
+    Left = 224
+    Top = 104
   end
 end

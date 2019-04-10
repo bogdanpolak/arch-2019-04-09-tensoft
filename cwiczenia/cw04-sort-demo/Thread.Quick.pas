@@ -4,63 +4,67 @@ interface
 
 uses
   System.Classes,
-  Vcl.ExtCtrls;
+  Vcl.ExtCtrls,
+  Thread.Sort;
 
 type
-
-  TQuickThread = class(TThread)
-  private
-    FSwapPaintBox: TPaintBox;
-//    procedure GenerateData(items: Integer);
-//    procedure qsort(i, j: Integer);
-//    procedure DrawItem(paintbox: TPaintBox; index, value: integer);
-    { Private declarations }
+  TQuickThread = class(TSortThread)
   protected
     procedure Execute; override;
-  public
-    SwapCounter: Integer;
-    data: TArray<Integer>;
-//    constructor Create(Count: Integer; ASwapPaintBox: TPaintBox);
   end;
+
+var
+  QuickSortIsWorking: boolean;
 
 implementation
 
-{ 
-  Important: Methods and properties of objects in visual components can only be
-  used in a method called using Synchronize, for example,
-
-      Synchronize(UpdateCaption);  
-
-  and UpdateCaption could look like,
-
-    procedure TQuickThread.UpdateCaption;
-    begin
-      Form1.Caption := 'Updated in a thread';
-    end; 
-    
-    or 
-    
-    Synchronize( 
-      procedure 
-      begin
-        Form1.Caption := 'Updated in thread via an anonymous method' 
-      end
-      )
-    );
-    
-  where an anonymous method is passed.
-  
-  Similarly, the developer can call the Queue method with similar parameters as 
-  above, instead passing another TThread class as the first parameter, putting
-  the calling thread in a queue with the other thread.
-    
-}
-
-{ TQuickThread }
+uses
+  System.Diagnostics,
+  WinApi.Windows;
 
 procedure TQuickThread.Execute;
+  procedure qsort(idx1, idx2: integer);
+  var
+    i: integer;
+    j: integer;
+    mediana: integer;
+  begin
+    if Terminated then
+      exit;
+    i := idx1;
+    j := idx2;
+    mediana := data[(i + j) div 2];
+    repeat
+      while data[i] < mediana do
+        inc(i);
+      while mediana < data[j] do
+        dec(j);
+      if i <= j then
+      begin
+        self.swap(i, j);
+        inc(i);
+        dec(j);
+      end;
+    until i > j;
+    if idx1 < j then
+      qsort(idx1, j);
+    if i < idx2 then
+      qsort(i, idx2);
+  end;
+
+var
+  sw: TStopwatch;
 begin
-  { Place thread code here }
+  QuickSortIsWorking := True;
+  sw := TStopwatch.StartNew;
+  qsort(0, Length(data) - 1);
+  Synchronize(
+    procedure()
+    begin
+      DrawResults(FSwapPaintBox, 'QuickSort', Length(data), sw.Elapsed,
+        SwapCounter);
+    end);
+  QuickSortIsWorking := False;
 end;
 
 end.
