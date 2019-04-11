@@ -20,6 +20,7 @@ type
     procedure tmrConsumerTimer(Sender: TObject);
     procedure btnAddWriterThreadClick(Sender: TObject);
     procedure btnTermianteProducersClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     MainQueue: TThreadedQueue<String>;
   public
@@ -51,6 +52,7 @@ type
 constructor TWriterThread.Create(const aWriterName:string;
   aQueue: TThreadedQueue<String>);
 begin
+  NameThreadForDebugging('Producer:'+aWriterName);
   FWriterName := aWriterName;
   FQueue := aQueue;
   inherited Create(false);
@@ -63,6 +65,47 @@ begin
     TThread.Sleep(100 + Random(600));
     FQueue.PushItem(Format('%s(%d)',[FWriterName,Random(256)]));
   end;
+end;
+
+{ * --------------------------------------------------------------
+  * Kolekcja producentów (writer-ów) (watków)
+  * -------------------------------------------------------------- }
+
+type
+  TProducerCollection = class
+  strict private
+    class var Threads: TObjectList<TWriterThread>;
+  public
+    class constructor Create;
+    class destructor Destroy;
+    class procedure Add (th: TWriterThread);
+    class procedure TerminateAll;
+  end;
+
+class constructor TProducerCollection.Create;
+begin
+  Threads := TObjectList<TWriterThread>.Create;
+end;
+
+class destructor TProducerCollection.Destroy;
+var
+  th: TWriterThread;
+begin
+  for th in Threads do
+    th.Terminate;
+  // Threads.Free;
+end;
+
+class procedure TProducerCollection.Add (th: TWriterThread);
+begin
+  Threads.Add(th);
+end;
+class procedure TProducerCollection.TerminateAll;
+var
+  th: TWriterThread;
+begin
+  for th in Threads do
+    th.Terminate;
 end;
 
 { * --------------------------------------------------------------
@@ -85,12 +128,19 @@ var
   n: string;
 begin
   n := GenerateThreadName(btnAddWriterThread);
-  TWriterThread.Create(n,MainQueue);
+  TProducerCollection.Add(
+    TWriterThread.Create(n,MainQueue)
+  );
 end;
 
 procedure TForm1.btnTermianteProducersClick(Sender: TObject);
 begin
-  // TODO: Terminate all producer threads
+  TProducerCollection.TerminateAll;
+end;
+
+procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  TProducerCollection.TerminateAll;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
