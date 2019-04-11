@@ -8,18 +8,30 @@ uses
   Model.Board;
 
 type
+  TSortResults = record
+    AlgorithmName: string;
+    DataSize: integer;
+    TotalTime: System.TimeSpan.TTimeSpan;
+    SwapCounter: integer;
+  end;
+
   TSortThread = class(TThread)
   private
     class function GetColor(value: Integer): TColor;
   protected
     FSwapPaintBox: TPaintBox;
     FBoard: TBoard;
+    FAlgorithmName: string;
+    FTotalTime: TTimeSpan;
     procedure DoSwap(i, j: Integer);
+    procedure DoDrawBoard;
+    procedure DoDrawItem (Index: integer);
+    procedure DoSynchroDrawSummary (const Name:String; const TimeSpan :TTimeSpan);
   public
     class procedure DrawItem(paintbox: TPaintBox; index, value: Integer);
     class procedure DrawBoard(paintbox: TPaintBox; Board:TBoard);
-    class procedure DrawResults(paintbox: TPaintBox; const name: string;
-      Board: TBoard; enlapsed: TTimeSpan);
+    class procedure DrawResults(paintbox: TPaintBox;
+      const SortResults:TSortResults);
     constructor Create(Count: Integer; ASwapPaintBox: TPaintBox);
   end;
 
@@ -48,9 +60,37 @@ begin
   FSwapPaintBox := ASwapPaintBox;
   FreeOnTerminate := True;
   FBoard.GenerateData(Count);
-  DrawBoard (FSwapPaintBox,FBoard);
+  DoDrawBoard;
   // Nie ruszaæ Create (musi byæ na koñcu)
   inherited Create;
+end;
+
+procedure TSortThread.DoDrawBoard;
+begin
+  DrawBoard (FSwapPaintBox,FBoard);
+end;
+
+procedure TSortThread.DoDrawItem(Index: integer);
+begin
+  DrawItem(FSwapPaintBox, Index, FBoard.Data[Index] );
+end;
+
+procedure TSortThread.DoSynchroDrawSummary(const Name:String;
+  const TimeSpan :TTimeSpan);
+var
+  SortResults: TSortResults;
+begin
+  with SortResults do begin
+    AlgorithmName := Name;
+    DataSize := FBoard.Count;
+    TotalTime := TimeSpan;
+    SwapCounter := FBoard.SwapCounter;
+  end;
+  Synchronize(
+    procedure()
+    begin
+      DrawResults(FSwapPaintBox, SortResults);
+    end);
 end;
 
 procedure TSortThread.DoSwap(i, j: Integer);
@@ -59,10 +99,10 @@ begin
   Synchronize(
     procedure()
     begin
-      DrawItem(FSwapPaintBox, i, FBoard.Data[i] );
-      DrawItem(FSwapPaintBox, j, FBoard.Data[j] );
+      DoDrawItem(i);
+      DoDrawItem(j);
     end);
-  WaitMilisecond (1.0);
+  WaitMilisecond (1.3);
 end;
 
 class function TSortThread.GetColor(value: Integer): TColor;
@@ -103,17 +143,18 @@ begin
     TSortThread.DrawItem(paintbox, i, Board.Data[i]);
 end;
 
-class procedure TSortThread.DrawResults (paintbox: TPaintBox; const name: string;
-  Board: TBoard; enlapsed: TTimeSpan);
+class procedure TSortThread.DrawResults (paintbox: TPaintBox;
+  const SortResults:TSortResults);
 begin
   paintbox.Canvas.Brush.Style := bsClear;
   paintbox.Canvas.Font.Height := 18;
   paintbox.Canvas.Font.Style := [fsBold];
-  paintbox.Canvas.TextOut( 10,5, name );
+  paintbox.Canvas.TextOut( 10,5, SortResults.AlgorithmName );
   paintbox.Canvas.Font.Style := [];
-  paintbox.Canvas.TextOut( 10,25, Format('items: %d',[Board.Count]) );
-  paintbox.Canvas.TextOut( 10,45, Format('time: %.3f',[enlapsed.TotalSeconds]) );
-  paintbox.Canvas.TextOut( 10,65, Format('swaps: %d',[Board.SwapCounter]) );
+  paintbox.Canvas.TextOut( 10,25, Format('items: %d',[SortResults.DataSize]) );
+  paintbox.Canvas.TextOut( 10,45, Format('time: %.3f',[
+    SortResults.TotalTime.TotalSeconds]) );
+  paintbox.Canvas.TextOut( 10,65, Format('swaps: %d',[SortResults.SwapCounter]) );
 end;
 
 

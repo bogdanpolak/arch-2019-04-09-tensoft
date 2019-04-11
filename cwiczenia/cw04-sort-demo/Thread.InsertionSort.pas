@@ -9,6 +9,8 @@ uses
 
 type
   TInsertionThread = class(TSortThread)
+  private
+    procedure Sort;
   protected
     procedure Execute; override;
   public
@@ -25,14 +27,25 @@ uses
 
 procedure TInsertionThread.Execute;
 var
+  sw: TStopwatch;
+begin
+  IsWorking := True;
+  try
+    sw := TStopwatch.StartNew;
+    Sort;
+    DoSynchroDrawSummary('InsertionSort', sw.Elapsed);
+  finally
+    IsWorking := False;
+  end;
+end;
+
+procedure TInsertionThread.Sort;
+var
   i: Integer;
   j: Integer;
-  sw: TStopwatch;
   minIdx: Integer;
   minv: Integer;
 begin
-  IsWorking := True;
-  sw := TStopwatch.StartNew;
   for i := 0 to FBoard.Count - 1 do
   begin
     minIdx := i;
@@ -50,12 +63,6 @@ begin
     if Terminated then
       break;
   end;
-  Synchronize(
-    procedure()
-    begin
-      DrawResults(FSwapPaintBox, 'InsertionSort', FBoard, sw.Elapsed);
-    end);
-  IsWorking := False;
 end;
 
 end.

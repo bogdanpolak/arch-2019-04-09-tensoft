@@ -9,6 +9,8 @@ uses
 
 type
   TQuickThread = class(TSortThread)
+  private
+    procedure Sort;
   protected
     procedure Execute; override;
   end;
@@ -23,6 +25,20 @@ uses
   WinApi.Windows;
 
 procedure TQuickThread.Execute;
+var
+  sw: TStopwatch;
+begin
+  QuickSortIsWorking := True;
+  try
+    sw := TStopwatch.StartNew;
+    Sort;
+    DoSynchroDrawSummary('QuickSort', sw.Elapsed);
+  finally
+    QuickSortIsWorking := False;
+  end;
+end;
+
+procedure TQuickThread.Sort;
   procedure qsort(idx1, idx2: integer);
   var
     i: integer;
@@ -52,18 +68,8 @@ procedure TQuickThread.Execute;
       qsort(i, idx2);
   end;
 
-var
-  sw: TStopwatch;
 begin
-  QuickSortIsWorking := True;
-  sw := TStopwatch.StartNew;
   qsort(0, FBoard.Count - 1);
-  Synchronize(
-    procedure()
-    begin
-      DrawResults(FSwapPaintBox, 'QuickSort', FBoard, sw.Elapsed);
-    end);
-  QuickSortIsWorking := False;
 end;
 
 end.

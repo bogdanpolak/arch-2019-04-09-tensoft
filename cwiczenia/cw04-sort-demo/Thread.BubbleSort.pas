@@ -9,6 +9,8 @@ uses
 
 type
   TBubbleThread = class(TSortThread)
+  private
+    procedure Sort;
   protected
     procedure Execute; override;
   end;
@@ -26,12 +28,23 @@ uses
 
 procedure TBubbleThread.Execute;
 var
-  i: Integer;
-  j: Integer;
   sw: TStopwatch;
 begin
   BubbleSortIsWorking := True;
-  sw := TStopwatch.StartNew;
+  try
+    sw := TStopwatch.StartNew;
+    Sort;
+    DoSynchroDrawSummary('Bubble Sort', sw.Elapsed);
+  finally
+    BubbleSortIsWorking := False;
+  end;
+end;
+
+procedure TBubbleThread.Sort;
+var
+  i: Integer;
+  j: Integer;
+begin
   for i := 0 to FBoard.Count - 1 do
     for j := 0 to FBoard.Count - 2 do
       if FBoard.Data[j] > FBoard.Data[j + 1] then
@@ -40,12 +53,6 @@ begin
           break;
         DoSwap(j, j + 1);
       end;
-  Synchronize(
-    procedure()
-    begin
-      DrawResults(FSwapPaintBox, 'Bubble Sort', FBoard, sw.Elapsed);
-    end);
-  BubbleSortIsWorking := False;
 end;
 
 end.
