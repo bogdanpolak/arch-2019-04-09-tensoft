@@ -51,6 +51,7 @@ type
 constructor TWriterThread.Create(const aWriterName:string;
   aQueue: TThreadedQueue<String>);
 begin
+  NameThreadForDebugging('Producer:'+aWriterName);
   FWriterName := aWriterName;
   FQueue := aQueue;
   inherited Create(false);
@@ -63,6 +64,31 @@ begin
     TThread.Sleep(100 + Random(600));
     FQueue.PushItem(Format('%s(%d)',[FWriterName,Random(256)]));
   end;
+end;
+
+{ * --------------------------------------------------------------
+  * Kolekcja producentów (writer-ów) (watków)
+  * -------------------------------------------------------------- }
+
+type
+  TProcucerCollection = class
+    class var Threads: TObjectList<TWriterThread>;
+    class constructor Create;
+    class destructor Destroy;
+  end;
+
+class constructor TProcucerCollection.Create;
+begin
+  Threads := TObjectList<TWriterThread>.Create;
+end;
+
+class destructor TProcucerCollection.Destroy;
+var
+  th: TWriterThread;
+begin
+  for th in Threads do
+    th.Terminate;
+  Threads.Free;
 end;
 
 { * --------------------------------------------------------------
@@ -85,12 +111,14 @@ var
   n: string;
 begin
   n := GenerateThreadName(btnAddWriterThread);
-  TWriterThread.Create(n,MainQueue);
+  TProcucerCollection.Threads.Add(
+    TWriterThread.Create(n,MainQueue)
+  );
 end;
 
 procedure TForm1.btnTermianteProducersClick(Sender: TObject);
 begin
-  // TODO: Terminate all producer threads
+  TProcucerCollection.Threads.Clear;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
