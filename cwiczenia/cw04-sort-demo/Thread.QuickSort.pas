@@ -33,15 +33,15 @@ procedure TQuickThread.Execute;
       exit;
     i := idx1;
     j := idx2;
-    mediana := data[(i + j) div 2];
+    mediana := FBoard.Data[(i + j) div 2];
     repeat
-      while data[i] < mediana do
+      while FBoard.Data[i] < mediana do
         inc(i);
-      while mediana < data[j] do
+      while mediana < FBoard.Data[j] do
         dec(j);
       if i <= j then
       begin
-        self.swap(i, j);
+        DoSwap(i, j);
         inc(i);
         dec(j);
       end;
@@ -57,12 +57,11 @@ var
 begin
   QuickSortIsWorking := True;
   sw := TStopwatch.StartNew;
-  qsort(0, Length(data) - 1);
+  qsort(0, FBoard.Count - 1);
   Synchronize(
     procedure()
     begin
-      DrawResults(FSwapPaintBox, 'QuickSort', Length(data), sw.Elapsed,
-        SwapCounter);
+      DrawResults(FSwapPaintBox, 'QuickSort', FBoard, sw.Elapsed);
     end);
   QuickSortIsWorking := False;
 end;

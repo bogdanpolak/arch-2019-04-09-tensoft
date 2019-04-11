@@ -32,19 +32,18 @@ var
 begin
   BubbleSortIsWorking := True;
   sw := TStopwatch.StartNew;
-  for i := 0 to Length(data) - 1 do
-    for j := 0 to Length(data) - 2 do
-      if data[j] > data[j + 1] then
+  for i := 0 to FBoard.Count - 1 do
+    for j := 0 to FBoard.Count - 2 do
+      if FBoard.Data[j] > FBoard.Data[j + 1] then
       begin
         if Self.Terminated then
           break;
-        Self.swap(j, j + 1);
+        DoSwap(j, j + 1);
       end;
   Synchronize(
     procedure()
     begin
-      DrawResults(FSwapPaintBox, 'Bubble Sort', Length(data), sw.Elapsed,
-        SwapCounter);
+      DrawResults(FSwapPaintBox, 'Bubble Sort', FBoard, sw.Elapsed);
     end);
   BubbleSortIsWorking := False;
 end;

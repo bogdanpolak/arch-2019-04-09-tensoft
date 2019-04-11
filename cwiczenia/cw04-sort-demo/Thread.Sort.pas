@@ -10,18 +10,16 @@ uses
 type
   TSortThread = class(TThread)
   private
-    FBoard: TBoard;
     class function GetColor(value: Integer): TColor;
   protected
     FSwapPaintBox: TPaintBox;
-    procedure swap(i, j: Integer);
+    FBoard: TBoard;
+    procedure DoSwap(i, j: Integer);
   public
-    SwapCounter: Integer;
-    data: TArray<Integer>;
     class procedure DrawItem(paintbox: TPaintBox; index, value: Integer);
-    class procedure DrawBoard(paintbox: TPaintBox; const data: TArray<Integer>);
+    class procedure DrawBoard(paintbox: TPaintBox; Board:TBoard);
     class procedure DrawResults(paintbox: TPaintBox; const name: string;
-      dataSize: Integer; enlapsed: TTimeSpan; swaps: Integer);
+      Board: TBoard; enlapsed: TTimeSpan);
     constructor Create(Count: Integer; ASwapPaintBox: TPaintBox);
   end;
 
@@ -50,27 +48,21 @@ begin
   FSwapPaintBox := ASwapPaintBox;
   FreeOnTerminate := True;
   FBoard.GenerateData(Count);
-  DrawBoard (FSwapPaintBox,data);
+  DrawBoard (FSwapPaintBox,FBoard);
   // Nie ruszaæ Create (musi byæ na koñcu)
   inherited Create;
 end;
 
-procedure TSortThread.swap(i, j: Integer);
-var
-  v: Integer;
+procedure TSortThread.DoSwap(i, j: Integer);
 begin
-  v := data[i];
-  data[i] := data[j];
-  data[j] := v;
+  FBoard.swap(i,j);
   Synchronize(
     procedure()
     begin
-      DrawItem(FSwapPaintBox, i, data[i]);
-      DrawItem(FSwapPaintBox, j, data[j]);
+      DrawItem(FSwapPaintBox, i, FBoard.Data[i] );
+      DrawItem(FSwapPaintBox, j, FBoard.Data[j] );
     end);
-  inc(SwapCounter);
   WaitMilisecond (1.0);
-  // Sleep(1);
 end;
 
 class function TSortThread.GetColor(value: Integer): TColor;
@@ -101,27 +93,27 @@ begin
   c.Rectangle(x, maxhg - (j), x + 5, maxhg);
 end;
 
-class procedure TSortThread.DrawBoard (paintbox: TPaintBox; const data: TArray<Integer>);
+class procedure TSortThread.DrawBoard (paintbox: TPaintBox; Board:TBoard);
 var
   i: Integer;
 begin
   paintbox.Canvas.Brush.Color := paintbox.Color;
   paintbox.Canvas.FillRect( Rect(0,0,paintbox.Width,paintbox.Height) );
-  for i := 0 to Length(data)-1 do
-    TSortThread.DrawItem(paintbox, i, data[i]);
+  for i := 0 to Board.Count-1 do
+    TSortThread.DrawItem(paintbox, i, Board.Data[i]);
 end;
 
 class procedure TSortThread.DrawResults (paintbox: TPaintBox; const name: string;
-  dataSize: Integer; enlapsed: TTimeSpan; swaps: Integer);
+  Board: TBoard; enlapsed: TTimeSpan);
 begin
   paintbox.Canvas.Brush.Style := bsClear;
   paintbox.Canvas.Font.Height := 18;
   paintbox.Canvas.Font.Style := [fsBold];
   paintbox.Canvas.TextOut( 10,5, name );
   paintbox.Canvas.Font.Style := [];
-  paintbox.Canvas.TextOut( 10,25, Format('items: %d',[dataSize]) );
+  paintbox.Canvas.TextOut( 10,25, Format('items: %d',[Board.Count]) );
   paintbox.Canvas.TextOut( 10,45, Format('time: %.3f',[enlapsed.TotalSeconds]) );
-  paintbox.Canvas.TextOut( 10,65, Format('swaps: %d',[swaps]) );
+  paintbox.Canvas.TextOut( 10,65, Format('swaps: %d',[Board.SwapCounter]) );
 end;
 
 
