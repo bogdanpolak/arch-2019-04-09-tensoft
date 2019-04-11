@@ -8,7 +8,8 @@ uses
   Thread.QuickSort in 'Thread.QuickSort.pas',
   Thread.Sort in 'Thread.Sort.pas',
   Thread.InsertionSort in 'Thread.InsertionSort.pas',
-  Model.Board in 'Model.Board.pas';
+  Model.Board in 'Model.Board.pas',
+  View.Board in 'View.Board.pas';
 
 {$R *.res}
 

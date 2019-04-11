@@ -9,6 +9,8 @@ uses
 
 type
   TInsertionThread = class(TSortThread)
+  const
+    ALGO_NAME = 'Insertion Sort';
   private
     procedure Sort;
   protected
@@ -29,11 +31,13 @@ procedure TInsertionThread.Execute;
 var
   sw: TStopwatch;
 begin
+  FBoard.FAlgorithmName := ALGO_NAME;
   IsWorking := True;
   try
     sw := TStopwatch.StartNew;
     Sort;
-    DoSynchroDrawSummary('InsertionSort', sw.Elapsed);
+    FBoard.FSortResults.TotalTime := sw.Elapsed;
+    DoSynchroDrawSummary();
   finally
     IsWorking := False;
   end;

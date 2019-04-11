@@ -7,7 +7,9 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Generics.Collections,
   System.TimeSpan,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
-  Vcl.StdCtrls;
+  Vcl.StdCtrls,
+  Model.Board,
+  View.Board;
 
 type
   TForm1 = class(TForm)
@@ -23,7 +25,14 @@ type
     procedure Button2Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
+    BubbleBoard: TBoard;
+    BubbleView: TBoardView;
+    QuickBoard: TBoard;
+    QuickView: TBoardView;
+    InsertionBoard: TBoard;
+    InsertionView: TBoardView;
   public
     { Public declarations }
   end;
@@ -47,17 +56,41 @@ end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
-  TBubbleThread.Create(ItemsInArray(PaintBox1), PaintBox1);
+  BubbleBoard.GenerateData( BubbleView.CalculateTotalVisibleItems );
+  BubbleView.DrawBoard;
+  TBubbleThread.Create(BubbleBoard, BubbleView);
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-  TQuickThread.Create(ItemsInArray(PaintBox2), PaintBox2);
+  QuickBoard.GenerateData( QuickView.CalculateTotalVisibleItems );
+  QuickView.DrawBoard;
+  TQuickThread.Create(QuickBoard, QuickView);
 end;
 
 procedure TForm1.Button3Click(Sender: TObject);
 begin
-  TInsertionThread.Create(ItemsInArray(PaintBox3), PaintBox3);
+  InsertionBoard.GenerateData( InsertionView.CalculateTotalVisibleItems );
+  InsertionView.DrawBoard;
+  TInsertionThread.Create(InsertionBoard, InsertionView);
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  BubbleBoard := TBoard.Create(Self);
+  BubbleView := TBoardView.Create(Self);
+  BubbleView.FBoard := BubbleBoard;
+  BubbleView.FPaintBox := PaintBox1;
+  // --
+  QuickBoard := TBoard.Create(Self);
+  QuickView := TBoardView.Create(Self);
+  QuickView.FBoard := QuickBoard;
+  QuickView.FPaintBox := PaintBox2;
+  // --
+  InsertionBoard := TBoard.Create(Self);
+  InsertionView := TBoardView.Create(Self);
+  InsertionView.FBoard := InsertionBoard;
+  InsertionView.FPaintBox := PaintBox3;
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);

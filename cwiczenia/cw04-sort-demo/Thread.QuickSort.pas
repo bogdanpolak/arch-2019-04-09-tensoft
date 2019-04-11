@@ -9,6 +9,8 @@ uses
 
 type
   TQuickThread = class(TSortThread)
+  const
+    ALGO_NAME = 'Quick Sort';
   private
     procedure Sort;
   protected
@@ -28,11 +30,13 @@ procedure TQuickThread.Execute;
 var
   sw: TStopwatch;
 begin
+  FBoard.FAlgorithmName := ALGO_NAME;
   QuickSortIsWorking := True;
   try
     sw := TStopwatch.StartNew;
     Sort;
-    DoSynchroDrawSummary('QuickSort', sw.Elapsed);
+    FBoard.FSortResults.TotalTime := sw.Elapsed;
+    DoSynchroDrawSummary();
   finally
     QuickSortIsWorking := False;
   end;

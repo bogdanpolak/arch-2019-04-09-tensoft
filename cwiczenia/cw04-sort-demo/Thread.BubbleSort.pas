@@ -9,6 +9,8 @@ uses
 
 type
   TBubbleThread = class(TSortThread)
+  const
+    ALGO_NAME = 'Bubble Sort';
   private
     procedure Sort;
   protected
@@ -30,11 +32,13 @@ procedure TBubbleThread.Execute;
 var
   sw: TStopwatch;
 begin
+  FBoard.FAlgorithmName := ALGO_NAME;
   BubbleSortIsWorking := True;
   try
     sw := TStopwatch.StartNew;
     Sort;
-    DoSynchroDrawSummary('Bubble Sort', sw.Elapsed);
+    FBoard.FSortResults.TotalTime := sw.Elapsed;
+    DoSynchroDrawSummary();
   finally
     BubbleSortIsWorking := False;
   end;

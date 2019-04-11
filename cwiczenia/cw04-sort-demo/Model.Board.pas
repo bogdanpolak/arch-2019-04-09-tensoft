@@ -3,9 +3,15 @@ unit Model.Board;
 interface
 
 uses
-  System.Classes;
+  System.Classes,
+  System.TimeSpan;
 
 type
+  TSortResults = record
+    TotalTime: System.TimeSpan.TTimeSpan;
+    SwapCounter: integer;
+  end;
+
   TBoard = class(TComponent)
   const
     MaxValue = 100;
@@ -13,7 +19,8 @@ type
     FData: TArray<Integer>;
     function GetValue(Index:integer): integer;
   public
-    SwapCounter: Integer;
+    FAlgorithmName: string;
+    FSortResults: TSortResults;
     constructor Create(AOwner: TComponent); override;
     procedure GenerateData (size: integer);
     procedure swap(i, j: Integer);
@@ -58,7 +65,7 @@ begin
   v := FData[i];
   FData[i] := FData[j];
   FData[j] := v;
-  inc(SwapCounter);
+  inc(FSortResults.SwapCounter);
 end;
 
 end.
