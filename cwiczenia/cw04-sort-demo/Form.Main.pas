@@ -14,9 +14,7 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Generics.Collections,
   System.TimeSpan,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
-  Vcl.StdCtrls,
-  Model.Board,
-  View.Board;
+  Vcl.StdCtrls;
 
 type
   TForm1 = class(TForm)
@@ -34,14 +32,7 @@ type
     procedure Button3Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
-    BubbleBoard: TBoard;
-    BubbleView: TBoardView;
-    QuickBoard: TBoard;
-    QuickView: TBoardView;
-    InsertionBoard: TBoard;
-    InsertionView: TBoardView;
   public
-    { Public declarations }
   end;
 
 var
@@ -52,52 +43,114 @@ implementation
 {$R *.dfm}
 
 uses
-  Thread.Sort, Thread.BubbleSort, Thread.QuickSort, Thread.InsertionSort;
+  Thread.Sort,
+  Thread.BubbleSort, Thread.QuickSort, Thread.InsertionSort,
+  Model.Board,
+  View.Board;
+
+{ * ----------------------------------------------------------------------
+  * TSortManager component
+  * ---------------------------------------------------------------------- }
+
+type
+  TSortAlgorithm = (saBubbleSort, saQuickSort, saInsertionSort);
+
+  TSortManager = class(TComponent)
+  private
+    FSortAlgorithm: TSortAlgorithm;
+    FView: TBoardView;
+    FBoard: TBoard;
+    FThread: TSortThread;
+  public
+    constructor Create(AOwner: TComponent; APaintBox: TPaintBox;
+      ASortAlgorithm: TSortAlgorithm);
+    procedure Execute;
+    function GetAlgorithmName: string;
+    function IsBusy: boolean;
+  end;
+
+constructor TSortManager.Create(AOwner: TComponent; APaintBox: TPaintBox;
+  ASortAlgorithm: TSortAlgorithm);
+begin
+  inherited Create(AOwner);
+  FSortAlgorithm := ASortAlgorithm;
+  FBoard := TBoard.Create(Self);
+  FView := TBoardView.Create(Self);
+  FView.FAlgorithmName := GetAlgorithmName();
+  FView.FBoard := FBoard;
+  FView.FPaintBox := APaintBox;
+end;
+
+procedure TSortManager.Execute;
+var
+  VisibleItems: Integer;
+begin
+  VisibleItems := FView.CalculateTotalVisibleItems;
+  FBoard.GenerateData(VisibleItems);
+  FView.DrawBoard;
+  if FThread <> nil then
+    FreeAndNil(FThread);
+  case FSortAlgorithm of
+    saBubbleSort:
+      FThread := TBubbleThread.Create(FBoard, FView);
+    saQuickSort:
+      FThread := TQuickThread.Create(FBoard, FView);
+    saInsertionSort:
+      FThread := TInsertionThread.Create(FBoard, FView);
+  end;
+end;
+
+function TSortManager.GetAlgorithmName: string;
+begin
+  case FSortAlgorithm of
+    saBubbleSort:
+      Result := 'Bubble Sort';
+    saQuickSort:
+      Result := 'Quick Sort';
+    saInsertionSort:
+      Result := 'Insertion Sort';
+  end;
+end;
+
+function TSortManager.IsBusy: boolean;
+begin
+  Result := (FThread<>nil) and not(FThread.Finished);
+end;
+
+{ * ----------------------------------------------------------------------
+  * Main app form
+  * ---------------------------------------------------------------------- }
+
+var
+  BubbleManager, QuickManager, InsertionManager: TSortManager;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
-  BubbleBoard.GenerateData(BubbleView.CalculateTotalVisibleItems);
-  BubbleView.DrawBoard;
-  TBubbleThread.Create(BubbleBoard, BubbleView);
+  BubbleManager.Execute;
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-  QuickBoard.GenerateData(QuickView.CalculateTotalVisibleItems);
-  QuickView.DrawBoard;
-  TQuickThread.Create(QuickBoard, QuickView);
+  QuickManager.Execute;
 end;
 
 procedure TForm1.Button3Click(Sender: TObject);
 begin
-  InsertionBoard.GenerateData(InsertionView.CalculateTotalVisibleItems);
-  InsertionView.DrawBoard;
-  TInsertionThread.Create(InsertionBoard, InsertionView);
+  InsertionManager.Execute;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  BubbleBoard := TBoard.Create(Self);
-  BubbleView := TBoardView.Create(Self);
-  BubbleView.FBoard := BubbleBoard;
-  BubbleView.FPaintBox := PaintBox1;
-  // --
-  QuickBoard := TBoard.Create(Self);
-  QuickView := TBoardView.Create(Self);
-  QuickView.FBoard := QuickBoard;
-  QuickView.FPaintBox := PaintBox2;
-  // --
-  InsertionBoard := TBoard.Create(Self);
-  InsertionView := TBoardView.Create(Self);
-  InsertionView.FBoard := InsertionBoard;
-  InsertionView.FPaintBox := PaintBox3;
+  BubbleManager := TSortManager.Create(Self, PaintBox1, saBubbleSort);
+  QuickManager := TSortManager.Create(Self, PaintBox2, saQuickSort);
+  InsertionManager := TSortManager.Create(Self, PaintBox3, saInsertionSort);
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);
 begin
-  Button1.Enabled := not BubbleSortIsWorking;
-  Button2.Enabled := not QuickSortIsWorking;
-  Button3.Enabled := not TInsertionThread.IsWorking;
+  Button1.Enabled := not BubbleManager.IsBusy;
+  Button2.Enabled := not QuickManager.IsBusy;
+  Button3.Enabled := not InsertionManager.IsBusy;
 end;
 
 end.

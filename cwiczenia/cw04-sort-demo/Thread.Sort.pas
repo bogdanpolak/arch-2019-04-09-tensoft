@@ -21,6 +21,7 @@ type
     FView: TBoardView;
     procedure DoSynchroDrawSummary;
     procedure DoSwap(i, j: Integer);
+    procedure Execute; override;
   public
     constructor Create(ABoard: TBoard; AView: TBoardView);
   end;
@@ -28,7 +29,7 @@ type
 implementation
 
 uses
-  WinApi.Windows;
+  WinApi.Windows; // QueryPerformanceCounter
 
 procedure WaitMilisecond(timeMs: double);
 var
@@ -42,12 +43,14 @@ begin
 end;
 
 constructor TSortThread.Create(ABoard: TBoard; AView: TBoardView);
+var
+  IsSuspended: Boolean;
 begin
   FBoard := ABoard;
-  FreeOnTerminate := True;
   FView := AView;
-  // Nie ruszać Create (musi być na końcu)
-  inherited Create;
+  FreeOnTerminate := False;
+  IsSuspended := False;
+  inherited Create(IsSuspended);
 end;
 
 procedure TSortThread.DoSynchroDrawSummary();
@@ -57,6 +60,11 @@ begin
     begin
       FView.DrawResults();
     end);
+end;
+
+procedure TSortThread.Execute;
+begin
+  NameThreadForDebugging(FView.FAlgorithmName);
 end;
 
 procedure TSortThread.DoSwap(i, j: Integer);

@@ -19,6 +19,7 @@ type
   private
     function GetColor(value: Integer): TColor;
   public
+    FAlgorithmName: string;
     FBoard: TBoard;
     FPaintBox: TPaintBox;
     function CalculateTotalVisibleItems: Integer;
@@ -76,7 +77,7 @@ begin
   c.Brush.Style := bsClear;
   c.Font.Height := 18;
   c.Font.Style := [fsBold];
-  c.TextOut(10, 5, FBoard.FAlgorithmName);
+  c.TextOut(10, 5, FAlgorithmName);
   c.Font.Style := [];
   c.TextOut(10, 25, Format('items: %d', [FBoard.Count]));
   c.TextOut(10, 45, Format('time: %.3f',

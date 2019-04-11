@@ -11,26 +11,20 @@ interface
 
 uses
   System.Classes,
-  Vcl.ExtCtrls,
   Thread.Sort;
 
 type
   TInsertionThread = class(TSortThread)
-  const
-    ALGO_NAME = 'Insertion Sort';
   private
     procedure Sort;
   protected
     procedure Execute; override;
-  public
-    class var IsWorking: boolean;
   end;
 
 implementation
 
 uses
-  System.Diagnostics,
-  WinApi.Windows;
+  System.Diagnostics;
 
 { TBubleThread }
 
@@ -38,16 +32,11 @@ procedure TInsertionThread.Execute;
 var
   sw: TStopwatch;
 begin
-  FBoard.FAlgorithmName := ALGO_NAME;
-  IsWorking := True;
-  try
-    sw := TStopwatch.StartNew;
-    Sort;
-    FBoard.FSortResults.TotalTime := sw.Elapsed;
-    DoSynchroDrawSummary();
-  finally
-    IsWorking := False;
-  end;
+  inherited;
+  sw := TStopwatch.StartNew;
+  Sort;
+  FBoard.FSortResults.TotalTime := sw.Elapsed;
+  DoSynchroDrawSummary();
 end;
 
 procedure TInsertionThread.Sort;

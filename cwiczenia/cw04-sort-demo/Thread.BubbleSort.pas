@@ -11,27 +11,20 @@ interface
 
 uses
   System.Classes,
-  Vcl.ExtCtrls,
   Thread.Sort;
 
 type
   TBubbleThread = class(TSortThread)
-  const
-    ALGO_NAME = 'Bubble Sort';
   private
     procedure Sort;
   protected
     procedure Execute; override;
   end;
 
-var
-  BubbleSortIsWorking: boolean;
-
 implementation
 
 uses
-  System.Diagnostics,
-  WinApi.Windows;
+  System.Diagnostics;
 
 { TBubleThread }
 
@@ -39,16 +32,11 @@ procedure TBubbleThread.Execute;
 var
   sw: TStopwatch;
 begin
-  FBoard.FAlgorithmName := ALGO_NAME;
-  BubbleSortIsWorking := True;
-  try
-    sw := TStopwatch.StartNew;
-    Sort;
-    FBoard.FSortResults.TotalTime := sw.Elapsed;
-    DoSynchroDrawSummary();
-  finally
-    BubbleSortIsWorking := False;
-  end;
+  inherited;
+  sw := TStopwatch.StartNew;
+  Sort;
+  FBoard.FSortResults.TotalTime := sw.Elapsed;
+  DoSynchroDrawSummary();
 end;
 
 procedure TBubbleThread.Sort;
