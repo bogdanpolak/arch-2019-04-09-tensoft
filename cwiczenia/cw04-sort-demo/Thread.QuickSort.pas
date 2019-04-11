@@ -1,3 +1,10 @@
+﻿{ * ------------------------------------------------------------------------
+  * ♥ ♥ ♥  Akademia BSC © 2019
+  * Informacja:
+  *   Kod źródłowy stworzony na potrzeby ćwiczeniowe
+  * Autor:
+  *   Bogdan Polak
+  *  ----------------------------------------------------------------------- * }
 unit Thread.QuickSort;
 
 interface

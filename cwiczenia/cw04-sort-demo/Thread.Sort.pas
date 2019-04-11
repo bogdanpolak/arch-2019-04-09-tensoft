@@ -1,3 +1,10 @@
+﻿{ * ------------------------------------------------------------------------
+  * ♥ ♥ ♥  Akademia BSC © 2019
+  * Informacja:
+  *   Kod źródłowy stworzony na potrzeby ćwiczeniowe
+  * Autor:
+  *   Bogdan Polak
+  *  ----------------------------------------------------------------------- * }
 unit Thread.Sort;
 
 interface
@@ -15,7 +22,7 @@ type
     procedure DoSynchroDrawSummary;
     procedure DoSwap(i, j: Integer);
   public
-    constructor Create(ABoard:TBoard; AView:TBoardView);
+    constructor Create(ABoard: TBoard; AView: TBoardView);
   end;
 
 implementation
@@ -23,7 +30,7 @@ implementation
 uses
   WinApi.Windows;
 
-procedure WaitMilisecond( timeMs: double );
+procedure WaitMilisecond(timeMs: double);
 var
   startTime64, endTime64, frequency64: Int64;
 begin
@@ -34,12 +41,12 @@ begin
     WinApi.Windows.QueryPerformanceCounter(endTime64);
 end;
 
-constructor TSortThread.Create(ABoard:TBoard; AView:TBoardView);
+constructor TSortThread.Create(ABoard: TBoard; AView: TBoardView);
 begin
   FBoard := ABoard;
   FreeOnTerminate := True;
   FView := AView;
-  // Nie rusza� Create (musi by� na ko�cu)
+  // Nie ruszać Create (musi być na końcu)
   inherited Create;
 end;
 
@@ -54,14 +61,14 @@ end;
 
 procedure TSortThread.DoSwap(i, j: Integer);
 begin
-  FBoard.swap(i,j);
+  FBoard.swap(i, j);
   Synchronize(
     procedure()
     begin
       FView.DrawItem(i);
       FView.DrawItem(j);
     end);
-  WaitMilisecond (1.3);
+  WaitMilisecond(1.3);
 end;
 
 end.

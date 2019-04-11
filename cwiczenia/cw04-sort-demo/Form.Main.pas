@@ -1,3 +1,10 @@
+﻿{ * ------------------------------------------------------------------------
+  * ♥ ♥ ♥  Akademia BSC © 2019
+  * Informacja:
+  *   Kod źródłowy stworzony na potrzeby ćwiczeniowe
+  * Autor:
+  *   Bogdan Polak
+  *  ----------------------------------------------------------------------- * }
 unit Form.Main;
 
 interface
@@ -37,8 +44,6 @@ type
     { Public declarations }
   end;
 
-
-
 var
   Form1: TForm1;
 
@@ -49,28 +54,23 @@ implementation
 uses
   Thread.Sort, Thread.BubbleSort, Thread.QuickSort, Thread.InsertionSort;
 
-function ItemsInArray (paintbox:TPaintBox): integer;
-begin
-  Result := paintbox.Width div 6
-end;
-
 procedure TForm1.Button1Click(Sender: TObject);
 begin
-  BubbleBoard.GenerateData( BubbleView.CalculateTotalVisibleItems );
+  BubbleBoard.GenerateData(BubbleView.CalculateTotalVisibleItems);
   BubbleView.DrawBoard;
   TBubbleThread.Create(BubbleBoard, BubbleView);
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-  QuickBoard.GenerateData( QuickView.CalculateTotalVisibleItems );
+  QuickBoard.GenerateData(QuickView.CalculateTotalVisibleItems);
   QuickView.DrawBoard;
   TQuickThread.Create(QuickBoard, QuickView);
 end;
 
 procedure TForm1.Button3Click(Sender: TObject);
 begin
-  InsertionBoard.GenerateData( InsertionView.CalculateTotalVisibleItems );
+  InsertionBoard.GenerateData(InsertionView.CalculateTotalVisibleItems);
   InsertionView.DrawBoard;
   TInsertionThread.Create(InsertionBoard, InsertionView);
 end;

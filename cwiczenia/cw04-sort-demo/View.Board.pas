@@ -1,3 +1,10 @@
+﻿{ * ------------------------------------------------------------------------
+  * ♥ ♥ ♥  Akademia BSC © 2019
+  * Informacja:
+  *   Kod źródłowy stworzony na potrzeby ćwiczeniowe
+  * Autor:
+  *   Bogdan Polak
+  *  ----------------------------------------------------------------------- * }
 unit View.Board;
 
 interface
@@ -14,7 +21,7 @@ type
   public
     FBoard: TBoard;
     FPaintBox: TPaintBox;
-    function CalculateTotalVisibleItems: integer;
+    function CalculateTotalVisibleItems: Integer;
     procedure DrawItem(index: Integer);
     procedure DrawBoard();
     procedure DrawResults();
@@ -26,7 +33,7 @@ uses
   System.SysUtils,
   Colors.Hsl;
 
-function TBoardView.CalculateTotalVisibleItems: integer;
+function TBoardView.CalculateTotalVisibleItems: Integer;
 begin
   Result := FPaintBox.Width div 6
 end;
@@ -35,9 +42,9 @@ procedure TBoardView.DrawBoard;
 var
   i: Integer;
 begin
-  FPaintbox.Canvas.Brush.Color := FPaintbox.Color;
-  FPaintbox.Canvas.FillRect( Rect(0,0,FPaintbox.Width,FPaintbox.Height) );
-  for i := 0 to FBoard.Count-1 do
+  FPaintBox.Canvas.Brush.Color := FPaintBox.Color;
+  FPaintBox.Canvas.FillRect(Rect(0, 0, FPaintBox.Width, FPaintBox.Height));
+  for i := 0 to FBoard.Count - 1 do
     DrawItem(i);
 end;
 
@@ -65,16 +72,16 @@ procedure TBoardView.DrawResults;
 var
   c: TCanvas;
 begin
-  c :=  FPaintbox.Canvas;
+  c := FPaintBox.Canvas;
   c.Brush.Style := bsClear;
   c.Font.Height := 18;
   c.Font.Style := [fsBold];
-  c.TextOut( 10,5, FBoard.FAlgorithmName );
+  c.TextOut(10, 5, FBoard.FAlgorithmName);
   c.Font.Style := [];
-  c.TextOut( 10,25, Format('items: %d',[FBoard.Count]) );
-  c.TextOut( 10,45, Format('time: %.3f',[
-    FBoard.FSortResults.TotalTime.TotalSeconds]) );
-  c.TextOut( 10,65, Format('swaps: %d',[FBoard.FSortResults.SwapCounter]) );
+  c.TextOut(10, 25, Format('items: %d', [FBoard.Count]));
+  c.TextOut(10, 45, Format('time: %.3f',
+    [FBoard.FSortResults.TotalTime.TotalSeconds]));
+  c.TextOut(10, 65, Format('swaps: %d', [FBoard.FSortResults.SwapCounter]));
 end;
 
 function TBoardView.GetColor(value: Integer): TColor;

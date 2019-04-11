@@ -1,3 +1,10 @@
+﻿{ * ------------------------------------------------------------------------
+  * ♥ ♥ ♥  Akademia BSC © 2019
+  * Informacja:
+  *   Kod źródłowy stworzony na potrzeby ćwiczeniowe
+  * Autor:
+  *   Bogdan Polak
+  *  ----------------------------------------------------------------------- * }
 unit Model.Board;
 
 interface
@@ -16,14 +23,14 @@ type
   const
     MaxValue = 100;
   private
-    FData: TArray<Integer>;
-    function GetValue(Index:integer): integer;
+    FData: TArray<integer>;
+    function GetValue(Index: integer): integer;
   public
     FAlgorithmName: string;
     FSortResults: TSortResults;
     constructor Create(AOwner: TComponent); override;
-    procedure GenerateData (size: integer);
-    procedure swap(i, j: Integer);
+    procedure GenerateData(size: integer);
+    procedure swap(i, j: integer);
     function Count: integer;
     property Data[Index: integer]: integer read GetValue;
   end;
@@ -34,7 +41,7 @@ implementation
 
 function TBoard.Count: integer;
 begin
-  Count := Length (FData);
+  Count := Length(FData);
 end;
 
 constructor TBoard.Create(AOwner: TComponent);
@@ -45,7 +52,7 @@ end;
 
 procedure TBoard.GenerateData(size: integer);
 var
-  i: Integer;
+  i: integer;
 begin
   randomize;
   SetLength(FData, size);
@@ -58,9 +65,9 @@ begin
   Result := FData[index];
 end;
 
-procedure TBoard.swap(i, j: Integer);
+procedure TBoard.swap(i, j: integer);
 var
-  v: Integer;
+  v: integer;
 begin
   v := FData[i];
   FData[i] := FData[j];
