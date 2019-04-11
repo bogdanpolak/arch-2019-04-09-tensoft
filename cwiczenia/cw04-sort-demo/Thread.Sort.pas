@@ -3,17 +3,14 @@ unit Thread.Sort;
 interface
 
 uses
-  System.Classes,
-  System.TimeSpan,
-  Vcl.Graphics,
-  Vcl.ExtCtrls;
+  System.Classes, System.TimeSpan,
+  Vcl.Graphics, Vcl.ExtCtrls,
+  Model.Board;
 
 type
   TSortThread = class(TThread)
-  const
-    MaxValue = 100;
   private
-    procedure GenerateData(items: Integer);
+    FBoard: TBoard;
     class function GetColor(value: Integer): TColor;
   protected
     FSwapPaintBox: TPaintBox;
@@ -49,22 +46,13 @@ end;
 
 constructor TSortThread.Create(Count: Integer; ASwapPaintBox: TPaintBox);
 begin
+  FBoard := TBoard.Create(nil);
   FSwapPaintBox := ASwapPaintBox;
   FreeOnTerminate := True;
-  GenerateData(Count);
+  FBoard.GenerateData(Count);
   DrawBoard (FSwapPaintBox,data);
   // Nie ruszaæ Create (musi byæ na koñcu)
   inherited Create;
-end;
-
-procedure TSortThread.GenerateData(items: Integer);
-var
-  i: Integer;
-begin
-  randomize;
-  SetLength(data, items);
-  for i := 0 to Length(data) - 1 do
-    data[i] := random(MaxValue) + 1;
 end;
 
 procedure TSortThread.swap(i, j: Integer);
@@ -90,7 +78,7 @@ var
   Hue: Integer;
   col: TRgbColor;
 begin
-  Hue := round(value * 256 / (MaxValue + 1));
+  Hue := round(value * 256 / (TBoard.MaxValue + 1));
   col := HSLtoRGB(Hue, 220, 120);
   Result := RGB(col.r, col.g, col.b);
 end;
@@ -103,7 +91,7 @@ var
   j: Integer;
 begin
   maxhg := paintbox.Height;
-  j := round(value * maxhg / MaxValue);
+  j := round(value * maxhg / TBoard.MaxValue);
   c := paintbox.Canvas;
   x := index * 6;
   c.Pen.Style := psClear;

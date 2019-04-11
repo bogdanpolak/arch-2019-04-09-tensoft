@@ -7,7 +7,8 @@ uses
   Thread.BubbleSort in 'Thread.BubbleSort.pas',
   Thread.QuickSort in 'Thread.QuickSort.pas',
   Thread.Sort in 'Thread.Sort.pas',
-  Thread.InsertionSort in 'Thread.InsertionSort.pas';
+  Thread.InsertionSort in 'Thread.InsertionSort.pas',
+  Model.Board in 'Model.Board.pas';
 
 {$R *.res}
 
