@@ -20,6 +20,7 @@ type
     procedure tmrConsumerTimer(Sender: TObject);
     procedure btnAddWriterThreadClick(Sender: TObject);
     procedure btnTermianteProducersClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     MainQueue: TThreadedQueue<String>;
   public
@@ -71,24 +72,40 @@ end;
   * -------------------------------------------------------------- }
 
 type
-  TProcucerCollection = class
+  TProducerCollection = class
+  strict private
     class var Threads: TObjectList<TWriterThread>;
+  public
     class constructor Create;
     class destructor Destroy;
+    class procedure Add (th: TWriterThread);
+    class procedure TerminateAll;
   end;
 
-class constructor TProcucerCollection.Create;
+class constructor TProducerCollection.Create;
 begin
   Threads := TObjectList<TWriterThread>.Create;
 end;
 
-class destructor TProcucerCollection.Destroy;
+class destructor TProducerCollection.Destroy;
 var
   th: TWriterThread;
 begin
   for th in Threads do
     th.Terminate;
-  Threads.Free;
+  // Threads.Free;
+end;
+
+class procedure TProducerCollection.Add (th: TWriterThread);
+begin
+  Threads.Add(th);
+end;
+class procedure TProducerCollection.TerminateAll;
+var
+  th: TWriterThread;
+begin
+  for th in Threads do
+    th.Terminate;
 end;
 
 { * --------------------------------------------------------------
@@ -111,14 +128,19 @@ var
   n: string;
 begin
   n := GenerateThreadName(btnAddWriterThread);
-  TProcucerCollection.Threads.Add(
+  TProducerCollection.Add(
     TWriterThread.Create(n,MainQueue)
   );
 end;
 
 procedure TForm1.btnTermianteProducersClick(Sender: TObject);
 begin
-  TProcucerCollection.Threads.Clear;
+  TProducerCollection.TerminateAll;
+end;
+
+procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  TProducerCollection.TerminateAll;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
