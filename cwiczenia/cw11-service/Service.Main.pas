@@ -54,13 +54,17 @@ end;
 procedure TService1.ServiceAfterInstall(Sender: TService);
 var
   Reg: System.Win.Registry.TRegistry;
+  ServiceDescription: string;
 begin
+  ShowMessage( ParamStr(0) );
+  Self.DisplayName := 'Service 2.0';
+  ServiceDescription := 'My Fantastic Windows Service';
   Reg := TRegistry.Create(KEY_READ or KEY_WRITE);
   try
     Reg.RootKey := HKEY_LOCAL_MACHINE;
     if Reg.OpenKey('\SYSTEM\CurrentControlSet\Services\' + name, false) then
     begin
-      Reg.WriteString('Description', 'My Fantastic Windows Service');
+      Reg.WriteString('Description', ServiceDescription);
       Reg.CloseKey;
     end;
   finally
