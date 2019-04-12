@@ -26,7 +26,7 @@ implementation
 uses
   System.Diagnostics;
 
-{ TBubleThread }
+{ TBubbleThread }
 
 procedure TBubbleThread.Execute;
 var

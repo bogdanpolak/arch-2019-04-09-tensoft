@@ -53,7 +53,9 @@ uses
   * ---------------------------------------------------------------------- }
 
 type
-  TSortAlgorithm = (saBubbleSort, saQuickSort, saInsertionSort);
+  TSortAlgorithm = (saNone, saBubbleSort, saQuickSort, saInsertionSort);
+
+  TThreadSortClass = class of TSortThread;
 
   TSortManager = class(TComponent)
   private
@@ -61,48 +63,64 @@ type
     FView: TBoardView;
     FBoard: TBoard;
     FThread: TSortThread;
+    FPaintBox: TPaintBox;
+    procedure DependeciesGuard;
   public
-    constructor Create(AOwner: TComponent; APaintBox: TPaintBox;
-      ASortAlgorithm: TSortAlgorithm);
+    constructor Create(AOwner: TComponent); override;
     procedure Execute;
     function GetAlgorithmName: string;
     function IsBusy: boolean;
+    property PaintBox: TPaintBox read FPaintBox write FPaintBox;
+    property SortAlgorithm: TSortAlgorithm read FSortAlgorithm write FSortAlgorithm;
   end;
 
-constructor TSortManager.Create(AOwner: TComponent; APaintBox: TPaintBox;
-  ASortAlgorithm: TSortAlgorithm);
+constructor TSortManager.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  FSortAlgorithm := ASortAlgorithm;
   FBoard := TBoard.Create(Self);
   FView := TBoardView.Create(Self);
-  FView.FAlgorithmName := GetAlgorithmName();
   FView.FBoard := FBoard;
-  FView.FPaintBox := APaintBox;
+end;
+
+procedure TSortManager.DependeciesGuard;
+begin
+  if (PaintBox=nil) or (SortAlgorithm=saNone) then
+    raise Exception.Create('Dependecies Guard Error!');
+  // --------------
+  // dependency initialization
+  FView.FPaintBox := PaintBox;
+  FView.FAlgorithmName := GetAlgorithmName();
 end;
 
 procedure TSortManager.Execute;
 var
   VisibleItems: Integer;
 begin
+  DependeciesGuard;
   VisibleItems := FView.CalculateTotalVisibleItems;
   FBoard.GenerateData(VisibleItems);
   FView.DrawBoard;
   if FThread <> nil then
     FreeAndNil(FThread);
   case FSortAlgorithm of
+    saNone:
+      raise Exception.Create('Error Message');
     saBubbleSort:
       FThread := TBubbleThread.Create(FBoard, FView);
     saQuickSort:
       FThread := TQuickThread.Create(FBoard, FView);
     saInsertionSort:
       FThread := TInsertionThread.Create(FBoard, FView);
+    else
+      raise Exception.Create('Error Message');
   end;
 end;
 
 function TSortManager.GetAlgorithmName: string;
 begin
   case FSortAlgorithm of
+    saNone:
+      raise Exception.Create('Error Message');
     saBubbleSort:
       Result := 'Bubble Sort';
     saQuickSort:
@@ -141,9 +159,21 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  BubbleManager := TSortManager.Create(Self, PaintBox1, saBubbleSort);
-  QuickManager := TSortManager.Create(Self, PaintBox2, saQuickSort);
-  InsertionManager := TSortManager.Create(Self, PaintBox3, saInsertionSort);
+  BubbleManager := TSortManager.Create(Self);
+  with BubbleManager do begin
+    PaintBox := PaintBox1;
+    SortAlgorithm := saBubbleSort;
+  end;
+  QuickManager := TSortManager.Create(Self);
+  with QuickManager do begin
+    PaintBox := PaintBox2;
+    SortAlgorithm := saQuickSort;
+  end;
+  InsertionManager := TSortManager.Create(Self);
+  with InsertionManager do begin
+    PaintBox := PaintBox3;
+    SortAlgorithm := saInsertionSort;
+  end;
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);

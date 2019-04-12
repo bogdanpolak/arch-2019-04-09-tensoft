@@ -26,7 +26,6 @@ type
     FData: TArray<integer>;
     function GetValue(Index: integer): integer;
   public
-    FAlgorithmName: string;
     FSortResults: TSortResults;
     constructor Create(AOwner: TComponent); override;
     procedure GenerateData(size: integer);
