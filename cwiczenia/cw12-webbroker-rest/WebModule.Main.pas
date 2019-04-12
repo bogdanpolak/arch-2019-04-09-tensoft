@@ -27,7 +27,7 @@ implementation
 {$R *.dfm}
 
 
-const
+var
   Data: array of string =
     ['"release=2018-11-21","product=10.3 Rio","ver=26.0","bds=20","months=20","codename=Carnival"',
     '"release=2017-03-22","product=10.2 Tokyo","ver=25.0","bds=19","months=11","codename=Godzilla"',
@@ -65,6 +65,21 @@ begin
   sl.Free; // TODO: try-finally
 end;
 
+function JsonToData (jo: TJSONObject): string;
+var
+  sl: TStringList;
+  s: string;
+begin
+  sl := TStringList.Create;
+  sl.Values['product'] := jo.GetValue('product').Value;
+  sl.Values['release'] := jo.GetValue('release').Value;
+  sl.Values['ver'] :=  jo.GetValue('ver').Value;
+  sl.Values['months'] :=  jo.GetValue('months').Value;
+  sl.Values['codename'] :=  jo.GetValue('codename').Value;
+  Result := sl.CommaText;
+  sl.Free;
+end;
+
 procedure TWebModule1.WebModule1DefaultHandlerAction(Sender: TObject;
   Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
 var
@@ -79,7 +94,7 @@ begin
       newJson := TJSONObject.ParseJSONValue(Request.Content) as TJSONObject;
       count := Length(Data)+1;
       SetLength(Data,count);
-      Data[count-1] := JsonToData (Data);
+      Data[count-1] := JsonToData (newJson);
     end;
     mtPost: ;
     mtDelete: ;
