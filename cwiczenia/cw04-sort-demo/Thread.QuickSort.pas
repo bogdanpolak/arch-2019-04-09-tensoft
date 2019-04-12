@@ -1,28 +1,43 @@
+﻿{ * ------------------------------------------------------------------------
+  * ♥ ♥ ♥  Akademia BSC © 2019
+  * Informacja:
+  *   Kod źródłowy stworzony na potrzeby ćwiczeniowe
+  * Autor:
+  *   Bogdan Polak
+  *  ----------------------------------------------------------------------- * }
 unit Thread.QuickSort;
 
 interface
 
 uses
   System.Classes,
-  Vcl.ExtCtrls,
   Thread.Sort;
 
 type
   TQuickThread = class(TSortThread)
+  private
+    procedure Sort;
   protected
     procedure Execute; override;
   end;
 
-var
-  QuickSortIsWorking: boolean;
-
 implementation
 
 uses
-  System.Diagnostics,
-  WinApi.Windows;
+  System.Diagnostics;
 
 procedure TQuickThread.Execute;
+var
+  sw: TStopwatch;
+begin
+  inherited;
+  sw := TStopwatch.StartNew;
+  Sort;
+  FBoard.FSortResults.TotalTime := sw.Elapsed;
+  DoSynchroDrawSummary();
+end;
+
+procedure TQuickThread.Sort;
   procedure qsort(idx1, idx2: integer);
   var
     i: integer;
@@ -33,15 +48,15 @@ procedure TQuickThread.Execute;
       exit;
     i := idx1;
     j := idx2;
-    mediana := data[(i + j) div 2];
+    mediana := FBoard.Data[(i + j) div 2];
     repeat
-      while data[i] < mediana do
+      while FBoard.Data[i] < mediana do
         inc(i);
-      while mediana < data[j] do
+      while mediana < FBoard.Data[j] do
         dec(j);
       if i <= j then
       begin
-        self.swap(i, j);
+        DoSwap(i, j);
         inc(i);
         dec(j);
       end;
@@ -52,19 +67,8 @@ procedure TQuickThread.Execute;
       qsort(i, idx2);
   end;
 
-var
-  sw: TStopwatch;
 begin
-  QuickSortIsWorking := True;
-  sw := TStopwatch.StartNew;
-  qsort(0, Length(data) - 1);
-  Synchronize(
-    procedure()
-    begin
-      DrawResults(FSwapPaintBox, 'QuickSort', Length(data), sw.Elapsed,
-        SwapCounter);
-    end);
-  QuickSortIsWorking := False;
+  qsort(0, FBoard.Count - 1);
 end;
 
 end.

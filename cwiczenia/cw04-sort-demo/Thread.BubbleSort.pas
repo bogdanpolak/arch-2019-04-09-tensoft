@@ -1,52 +1,57 @@
+﻿{ * ------------------------------------------------------------------------
+  * ♥ ♥ ♥  Akademia BSC © 2019
+  * Informacja:
+  *   Kod źródłowy stworzony na potrzeby ćwiczeniowe
+  * Autor:
+  *   Bogdan Polak
+  *  ----------------------------------------------------------------------- * }
 unit Thread.BubbleSort;
 
 interface
 
 uses
   System.Classes,
-  Vcl.ExtCtrls,
   Thread.Sort;
 
 type
   TBubbleThread = class(TSortThread)
+  private
+    procedure Sort;
   protected
     procedure Execute; override;
   end;
 
-var
-  BubbleSortIsWorking: boolean;
-
 implementation
 
 uses
-  System.Diagnostics,
-  WinApi.Windows;
+  System.Diagnostics;
 
-{ TBubleThread }
+{ TBubbleThread }
 
 procedure TBubbleThread.Execute;
 var
-  i: Integer;
-  j: Integer;
   sw: TStopwatch;
 begin
-  BubbleSortIsWorking := True;
+  inherited;
   sw := TStopwatch.StartNew;
-  for i := 0 to Length(data) - 1 do
-    for j := 0 to Length(data) - 2 do
-      if data[j] > data[j + 1] then
+  Sort;
+  FBoard.FSortResults.TotalTime := sw.Elapsed;
+  DoSynchroDrawSummary();
+end;
+
+procedure TBubbleThread.Sort;
+var
+  i: Integer;
+  j: Integer;
+begin
+  for i := 0 to FBoard.Count - 1 do
+    for j := 0 to FBoard.Count - 2 do
+      if FBoard.Data[j] > FBoard.Data[j + 1] then
       begin
         if Self.Terminated then
           break;
-        Self.swap(j, j + 1);
+        DoSwap(j, j + 1);
       end;
-  Synchronize(
-    procedure()
-    begin
-      DrawResults(FSwapPaintBox, 'Bubble Sort', Length(data), sw.Elapsed,
-        SwapCounter);
-    end);
-  BubbleSortIsWorking := False;
 end;
 
 end.

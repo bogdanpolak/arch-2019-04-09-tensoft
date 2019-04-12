@@ -1,62 +1,68 @@
+﻿{ * ------------------------------------------------------------------------
+  * ♥ ♥ ♥  Akademia BSC © 2019
+  * Informacja:
+  *   Kod źródłowy stworzony na potrzeby ćwiczeniowe
+  * Autor:
+  *   Bogdan Polak
+  *  ----------------------------------------------------------------------- * }
 unit Thread.InsertionSort;
 
 interface
 
 uses
   System.Classes,
-  Vcl.ExtCtrls,
   Thread.Sort;
 
 type
   TInsertionThread = class(TSortThread)
+  private
+    procedure Sort;
   protected
     procedure Execute; override;
-  public
-    class var IsWorking: boolean;
   end;
 
 implementation
 
 uses
-  System.Diagnostics,
-  WinApi.Windows;
+  System.Diagnostics;
 
 { TBubleThread }
 
 procedure TInsertionThread.Execute;
 var
+  sw: TStopwatch;
+begin
+  inherited;
+  sw := TStopwatch.StartNew;
+  Sort;
+  FBoard.FSortResults.TotalTime := sw.Elapsed;
+  DoSynchroDrawSummary();
+end;
+
+procedure TInsertionThread.Sort;
+var
   i: Integer;
   j: Integer;
-  sw: TStopwatch;
   minIdx: Integer;
   minv: Integer;
 begin
-  IsWorking := True;
-  sw := TStopwatch.StartNew;
-  for i := 0 to Length(data) - 1 do
+  for i := 0 to FBoard.Count - 1 do
   begin
     minIdx := i;
-    minv := data[i];
-    for j := i + 1 to Length(data) - 1 do
+    minv := FBoard.Data[i];
+    for j := i + 1 to FBoard.Count - 1 do
     begin
-      if data[j] < minv then
+      if FBoard.Data[j] < minv then
       begin
         minIdx := j;
-        minv := data[j];
+        minv := FBoard.Data[j];
       end;
     end;
     if minIdx <> i then
-      self.swap(i, minIdx);
+      DoSwap(i, minIdx);
     if Terminated then
       break;
   end;
-  Synchronize(
-    procedure()
-    begin
-      DrawResults(FSwapPaintBox, 'InsertionSort', Length(data), sw.Elapsed,
-        SwapCounter);
-    end);
-  IsWorking := False;
 end;
 
 end.
