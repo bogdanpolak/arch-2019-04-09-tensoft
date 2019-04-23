@@ -15,29 +15,11 @@ uses
 
 type
   TInsertionThread = class(TSortThread)
-  private
-    procedure Sort;
   protected
-    procedure Execute; override;
+    procedure Sort; override;
   end;
 
 implementation
-
-uses
-  System.Diagnostics;
-
-{ TBubleThread }
-
-procedure TInsertionThread.Execute;
-var
-  sw: TStopwatch;
-begin
-  inherited;
-  sw := TStopwatch.StartNew;
-  Sort;
-  FBoard.FSortResults.TotalTime := sw.Elapsed;
-  DoSynchroDrawSummary();
-end;
 
 procedure TInsertionThread.Sort;
 var
