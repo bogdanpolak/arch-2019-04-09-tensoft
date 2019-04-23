@@ -1,14 +1,14 @@
-﻿unit Component.SortManager;
-
-interface
-
-{ * ------------------------------------------------------------------------
+﻿{ * ------------------------------------------------------------------------
   * ♥ ♥ ♥  Akademia BSC © 2019
   * Informacja:
   *   Kod źródłowy stworzony na potrzeby ćwiczeniowe
   * Autor:
   *   Bogdan Polak
   *  ----------------------------------------------------------------------- * }
+unit Component.SortManager;
+
+interface
+
 uses
   System.Classes,
   Vcl.ExtCtrls,
@@ -27,16 +27,15 @@ type
     FView: TBoardView;
     FBoard: TBoard;
     FThread: TSortThread;
-    FPaintBox: TPaintBox;
+    procedure Init(APaintBox: TPaintBox; ASortAlgorithm: TSortAlgorithm);
     procedure DependeciesGuard;
   public
-    constructor Create(AOwner: TComponent); override;
     constructor CreateAndInit(AOwner: TComponent;
       APaintBox: TPaintBox; ASortAlgorithm: TSortAlgorithm); virtual;
+    destructor Destroy; override;
     procedure Execute;
     function GetAlgorithmName: string;
     function IsBusy: boolean;
-    property PaintBox: TPaintBox read FPaintBox write FPaintBox;
     property SortAlgorithm: TSortAlgorithm read FSortAlgorithm
       write FSortAlgorithm;
   end;
@@ -49,30 +48,32 @@ uses
   Thread.InsertionSort,
   Thread.QuickSort;
 
-constructor TSortManager.Create(AOwner: TComponent);
+procedure TSortManager.Init(APaintBox: TPaintBox; ASortAlgorithm: TSortAlgorithm);
 begin
-  inherited;
+  SortAlgorithm := ASortAlgorithm;
   FBoard := TBoard.Create(Self);
-  FView := TBoardView.Create(Self);
-  FView.FBoard := FBoard;
+  FView := TBoardView.Create(FBoard,APaintBox);
+  FView.FAlgorithmName := GetAlgorithmName();
 end;
 
 constructor TSortManager.CreateAndInit(AOwner: TComponent;
   APaintBox: TPaintBox; ASortAlgorithm: TSortAlgorithm);
 begin
-  Create(AOwner);
-  SortAlgorithm := ASortAlgorithm;
-  PaintBox := APaintBox;
+  inherited Create(AOwner);
+  Init(APaintBox, ASortAlgorithm);
 end;
 
 procedure TSortManager.DependeciesGuard;
 begin
-  if (PaintBox = nil) or (SortAlgorithm = saNone) then
+  if (SortAlgorithm = saNone) then
     raise Exception.Create('Dependecies Guard Error!');
-  // --------------
-  // dependency initialization
-  FView.FPaintBox := PaintBox;
-  FView.FAlgorithmName := GetAlgorithmName();
+end;
+
+destructor TSortManager.Destroy;
+begin
+  if FView<>nil then
+    FView.Free;
+  inherited;
 end;
 
 procedure TSortManager.Execute;
