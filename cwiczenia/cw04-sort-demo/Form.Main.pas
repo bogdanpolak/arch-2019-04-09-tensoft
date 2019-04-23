@@ -27,6 +27,9 @@ type
     Timer1: TTimer;
     Button3: TButton;
     PaintBox3: TPaintBox;
+    edtSwapTime: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
