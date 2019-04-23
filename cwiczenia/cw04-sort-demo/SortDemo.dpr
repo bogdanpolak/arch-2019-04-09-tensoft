@@ -3,13 +3,7 @@ program SortDemo;
 uses
   Vcl.Forms,
   Form.Main in 'Form.Main.pas' {Form1},
-  Colors.Hsl in 'Colors.Hsl.pas',
-  Thread.BubbleSort in 'Thread.BubbleSort.pas',
-  Thread.QuickSort in 'Thread.QuickSort.pas',
-  Thread.Sort in 'Thread.Sort.pas',
-  Thread.InsertionSort in 'Thread.InsertionSort.pas',
-  Model.Board in 'Model.Board.pas',
-  View.Board in 'View.Board.pas';
+  Colors.Hsl in 'Colors.Hsl.pas';
 
 {$R *.res}
 
