@@ -15,17 +15,20 @@ uses
   Model.Board;
 
 type
-  TBoardView = class(TComponent)
+  TBoardView = class
   private
+    FBoard: TBoard;
+    FPaintBox: TPaintBox;
     function GetColor(value: Integer): TColor;
   public
     FAlgorithmName: string;
-    FBoard: TBoard;
-    FPaintBox: TPaintBox;
+    constructor Create(ABoard: TBoard; APaintBox: TPaintBox);
     function CalculateTotalVisibleItems: Integer;
     procedure DrawItem(index: Integer);
     procedure DrawBoard();
     procedure DrawResults();
+    property Board: TBoard read FBoard; // write FBoard;
+    property PaintBox: TPaintBox read FPaintBox; // write FPaintBox;
   end;
 
 implementation
@@ -37,6 +40,12 @@ uses
 function TBoardView.CalculateTotalVisibleItems: Integer;
 begin
   Result := FPaintBox.Width div 6
+end;
+
+constructor TBoardView.Create(ABoard: TBoard; APaintBox: TPaintBox);
+begin
+  FBoard := ABoard;
+  FPaintBox := APaintBox;
 end;
 
 procedure TBoardView.DrawBoard;

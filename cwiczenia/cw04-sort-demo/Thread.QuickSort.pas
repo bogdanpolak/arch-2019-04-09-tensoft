@@ -15,27 +15,11 @@ uses
 
 type
   TQuickThread = class(TSortThread)
-  private
-    procedure Sort;
   protected
-    procedure Execute; override;
+    procedure Sort; override;
   end;
 
 implementation
-
-uses
-  System.Diagnostics;
-
-procedure TQuickThread.Execute;
-var
-  sw: TStopwatch;
-begin
-  inherited;
-  sw := TStopwatch.StartNew;
-  Sort;
-  FBoard.FSortResults.TotalTime := sw.Elapsed;
-  DoSynchroDrawSummary();
-end;
 
 procedure TQuickThread.Sort;
   procedure qsort(idx1, idx2: integer);

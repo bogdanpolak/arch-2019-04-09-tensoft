@@ -11,25 +11,29 @@ interface
 
 uses
   System.Classes,
+  System.SysUtils,
   Model.Board,
   View.Board;
 
 type
   TSortThread = class(TThread)
+  private
+    FProcessTime: double;
   protected
     FBoard: TBoard;
     FView: TBoardView;
-    procedure DoSynchroDrawSummary;
     procedure DoSwap(i, j: Integer);
-    procedure Execute; override;
+    procedure Sort; virtual; abstract;
   public
-    constructor Create(ABoard: TBoard; AView: TBoardView);
+    constructor Create(ABoard: TBoard; AView: TBoardView; SwapTime: double);
+    procedure Execute; override;
   end;
 
 implementation
 
 uses
-  WinApi.Windows; // QueryPerformanceCounter
+  WinApi.Windows, // QueryPerformanceCounter
+  System.Diagnostics;
 
 procedure WaitMilisecond(timeMs: double);
 var
@@ -42,7 +46,8 @@ begin
     WinApi.Windows.QueryPerformanceCounter(endTime64);
 end;
 
-constructor TSortThread.Create(ABoard: TBoard; AView: TBoardView);
+constructor TSortThread.Create(ABoard: TBoard; AView: TBoardView;
+  SwapTime: double);
 var
   IsSuspended: Boolean;
 begin
@@ -50,21 +55,23 @@ begin
   FView := AView;
   FreeOnTerminate := False;
   IsSuspended := False;
+  FProcessTime := SwapTime;
   inherited Create(IsSuspended);
 end;
 
-procedure TSortThread.DoSynchroDrawSummary();
+procedure TSortThread.Execute;
+var
+  sw: TStopwatch;
 begin
+  NameThreadForDebugging(FView.FAlgorithmName);
+  sw := TStopwatch.StartNew;
+  Sort;
+  FBoard.FSortResults.TotalTime := sw.Elapsed;
   Synchronize(
     procedure()
     begin
       FView.DrawResults();
     end);
-end;
-
-procedure TSortThread.Execute;
-begin
-  NameThreadForDebugging(FView.FAlgorithmName);
 end;
 
 procedure TSortThread.DoSwap(i, j: Integer);
@@ -76,7 +83,7 @@ begin
       FView.DrawItem(i);
       FView.DrawItem(j);
     end);
-  WaitMilisecond(1.3);
+  WaitMilisecond(FProcessTime);
 end;
 
 end.
