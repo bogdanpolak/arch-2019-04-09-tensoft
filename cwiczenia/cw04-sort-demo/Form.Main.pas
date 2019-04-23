@@ -63,21 +63,10 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
-  BubbleManager := TSortManager.Create(Self);
-  with BubbleManager do begin
-    PaintBox := PaintBox1;
-    SortAlgorithm := saBubbleSort;
-  end;
-  QuickManager := TSortManager.Create(Self);
-  with QuickManager do begin
-    PaintBox := PaintBox2;
-    SortAlgorithm := saQuickSort;
-  end;
-  InsertionManager := TSortManager.Create(Self);
-  with InsertionManager do begin
-    PaintBox := PaintBox3;
-    SortAlgorithm := saInsertionSort;
-  end;
+  BubbleManager := TSortManager.CreateAndInit(Self, PaintBox1, saBubbleSort);
+  QuickManager := TSortManager.CreateAndInit(Self, PaintBox2, saQuickSort);
+  InsertionManager := TSortManager.CreateAndInit(Self, PaintBox3,
+    saInsertionSort);
 end;
 
 procedure TForm1.Timer1Timer(Sender: TObject);

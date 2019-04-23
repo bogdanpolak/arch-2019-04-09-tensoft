@@ -10,7 +10,7 @@ uses
   Thread.InsertionSort in 'Thread.InsertionSort.pas',
   Model.Board in 'Model.Board.pas',
   View.Board in 'View.Board.pas',
-  Presentation.Sort in 'Presentation.Sort.pas';
+  Component.SortManager in 'Component.SortManager.pas';
 
 {$R *.res}
 

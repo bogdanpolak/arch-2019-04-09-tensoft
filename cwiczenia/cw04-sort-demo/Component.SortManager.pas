@@ -31,13 +31,15 @@ type
     procedure DependeciesGuard;
   public
     constructor Create(AOwner: TComponent); override;
+    constructor CreateAndInit(AOwner: TComponent;
+      APaintBox: TPaintBox; ASortAlgorithm: TSortAlgorithm); virtual;
     procedure Execute;
     function GetAlgorithmName: string;
     function IsBusy: boolean;
     property PaintBox: TPaintBox read FPaintBox write FPaintBox;
-    property SortAlgorithm: TSortAlgorithm read FSortAlgorithm write FSortAlgorithm;
+    property SortAlgorithm: TSortAlgorithm read FSortAlgorithm
+      write FSortAlgorithm;
   end;
-
 
 implementation
 
@@ -49,15 +51,23 @@ uses
 
 constructor TSortManager.Create(AOwner: TComponent);
 begin
-  inherited Create(AOwner);
+  inherited;
   FBoard := TBoard.Create(Self);
   FView := TBoardView.Create(Self);
   FView.FBoard := FBoard;
 end;
 
+constructor TSortManager.CreateAndInit(AOwner: TComponent;
+  APaintBox: TPaintBox; ASortAlgorithm: TSortAlgorithm);
+begin
+  Create(AOwner);
+  SortAlgorithm := ASortAlgorithm;
+  PaintBox := APaintBox;
+end;
+
 procedure TSortManager.DependeciesGuard;
 begin
-  if (PaintBox=nil) or (SortAlgorithm=saNone) then
+  if (PaintBox = nil) or (SortAlgorithm = saNone) then
     raise Exception.Create('Dependecies Guard Error!');
   // --------------
   // dependency initialization
@@ -84,8 +94,8 @@ begin
       FThread := TQuickThread.Create(FBoard, FView);
     saInsertionSort:
       FThread := TInsertionThread.Create(FBoard, FView);
-    else
-      raise Exception.Create('Error Message');
+  else
+    raise Exception.Create('Error Message');
   end;
 end;
 
@@ -105,7 +115,7 @@ end;
 
 function TSortManager.IsBusy: boolean;
 begin
-  Result := (FThread<>nil) and not(FThread.Finished);
+  Result := (FThread <> nil) and not(FThread.Finished);
 end;
 
 end.
