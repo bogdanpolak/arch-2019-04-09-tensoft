@@ -19,7 +19,7 @@ type
     SwapCounter: integer;
   end;
 
-  TBoard = class(TComponent)
+  TBoard = class
   const
     MaxValue = 100;
   private
@@ -27,7 +27,6 @@ type
     function GetValue(Index: integer): integer;
   public
     FSortResults: TSortResults;
-    constructor Create(AOwner: TComponent); override;
     procedure GenerateData(size: integer);
     procedure swap(i, j: integer);
     function Count: integer;
@@ -41,12 +40,6 @@ implementation
 function TBoard.Count: integer;
 begin
   Count := Length(FData);
-end;
-
-constructor TBoard.Create(AOwner: TComponent);
-begin
-  inherited;
-
 end;
 
 procedure TBoard.GenerateData(size: integer);
