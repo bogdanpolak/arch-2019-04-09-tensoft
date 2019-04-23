@@ -35,6 +35,7 @@ type
     procedure Timer1Timer(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure edtSwapTimeChange(Sender: TObject);
   private
     BubbleManager: TSortManager;
     QuickManager: TSortManager;
@@ -62,6 +63,18 @@ end;
 procedure TForm1.Button3Click(Sender: TObject);
 begin
   InsertionManager.Execute;
+end;
+
+procedure TForm1.edtSwapTimeChange(Sender: TObject);
+var
+  swapTime: Double;
+begin
+  if TryStrToFloat( edtSwapTime.Text, swapTime ) then
+  begin
+    BubbleManager.SwapTime := swapTime;
+    QuickManager.SwapTime := swapTime;
+    InsertionManager.SwapTime := swapTime;
+  end;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);

@@ -25,9 +25,8 @@ type
     procedure DoSwap(i, j: Integer);
     procedure Sort; virtual; abstract;
   public
-    constructor Create(ABoard: TBoard; AView: TBoardView);
+    constructor Create(ABoard: TBoard; AView: TBoardView; SwapTime: double);
     procedure Execute; override;
-    property ProcessTime: double read FProcessTime write FProcessTime;
   end;
 
 implementation
@@ -35,7 +34,6 @@ implementation
 uses
   WinApi.Windows, // QueryPerformanceCounter
   System.Diagnostics;
-
 
 procedure WaitMilisecond(timeMs: double);
 var
@@ -48,7 +46,8 @@ begin
     WinApi.Windows.QueryPerformanceCounter(endTime64);
 end;
 
-constructor TSortThread.Create(ABoard: TBoard; AView: TBoardView);
+constructor TSortThread.Create(ABoard: TBoard; AView: TBoardView;
+  SwapTime: double);
 var
   IsSuspended: Boolean;
 begin
@@ -56,7 +55,7 @@ begin
   FView := AView;
   FreeOnTerminate := False;
   IsSuspended := False;
-  ProcessTime := 1.3;
+  FProcessTime := SwapTime;
   inherited Create(IsSuspended);
 end;
 
@@ -84,7 +83,7 @@ begin
       FView.DrawItem(i);
       FView.DrawItem(j);
     end);
-  WaitMilisecond(ProcessTime);
+  WaitMilisecond(FProcessTime);
 end;
 
 end.

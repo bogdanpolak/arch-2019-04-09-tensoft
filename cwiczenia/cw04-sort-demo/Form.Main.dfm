@@ -120,6 +120,7 @@ object Form1: TForm1
       Alignment = taCenter
       TabOrder = 3
       Text = '1.3'
+      OnChange = edtSwapTimeChange
       ExplicitLeft = 391
       ExplicitHeight = 21
     end

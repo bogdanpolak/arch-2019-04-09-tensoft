@@ -23,10 +23,12 @@ type
 
   TSortManager = class(TComponent)
   private
+    initialized: boolean;
     FSortAlgorithm: TSortAlgorithm;
     FView: TBoardView;
     FBoard: TBoard;
     FThread: TSortThread;
+    FSwapTime: double;
   protected
     procedure Init(APaintBox: TPaintBox; ASortAlgorithm: TSortAlgorithm); virtual;
     function GetAlgorithmName: string; virtual;
@@ -38,6 +40,7 @@ type
     function IsBusy: boolean;
     property AlgorithmName: string read GetAlgorithmName;
     property SortAlgorithm: TSortAlgorithm read FSortAlgorithm;
+    property SwapTime: double read FSwapTime write FSwapTime;
   end;
 
 implementation
@@ -52,9 +55,11 @@ procedure TSortManager.Init(APaintBox: TPaintBox;
   ASortAlgorithm: TSortAlgorithm);
 begin
   FSortAlgorithm := ASortAlgorithm;
+  SwapTime := 1.3; // milliseconds
   FBoard := TBoard.Create;
   FView := TBoardView.Create(FBoard, APaintBox);
   FView.FAlgorithmName := AlgorithmName;
+  initialized := True;
 end;
 
 constructor TSortManager.CreateAndInit(AOwner: TComponent; APaintBox: TPaintBox;
@@ -77,6 +82,8 @@ procedure TSortManager.Execute;
 var
   VisibleItems: Integer;
 begin
+  if not(initialized) then
+    exit;
   VisibleItems := FView.CalculateTotalVisibleItems;
   FBoard.GenerateData(VisibleItems);
   FView.DrawBoard;
@@ -84,11 +91,11 @@ begin
     FreeAndNil(FThread);
   case SortAlgorithm of
     saBubbleSort:
-      FThread := TBubbleThread.Create(FBoard, FView);
+      FThread := TBubbleThread.Create(FBoard, FView, SwapTime);
     saQuickSort:
-      FThread := TQuickThread.Create(FBoard, FView);
+      FThread := TQuickThread.Create(FBoard, FView, SwapTime);
     saInsertionSort:
-      FThread := TInsertionThread.Create(FBoard, FView);
+      FThread := TInsertionThread.Create(FBoard, FView, SwapTime);
   else
     raise Exception.Create('[Internal] Not supported algorithm');
   end;
